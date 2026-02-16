@@ -1,13 +1,14 @@
 # === Stage 1: Сборка (Build) ===
 FROM node:18-alpine AS builder
+
 WORKDIR /app
 
-# Принимаем аргументы (ссылки) из GitHub Actions
+# Принимаем аргументы из GitHub Actions
 ARG VITE_API_URL
 ARG VITE_WS_URL
 ARG VITE_APP_URL
 
-# Превращаем их в переменные среды для сборщика Vite
+# КРИТИЧЕСКИ ВАЖНО: делаем их ENV ДО копирования файлов
 ENV VITE_API_URL=$VITE_API_URL \
     VITE_WS_URL=$VITE_WS_URL \
     VITE_APP_URL=$VITE_APP_URL \
@@ -16,23 +17,33 @@ ENV VITE_API_URL=$VITE_API_URL \
 # Включаем Corepack для Yarn
 RUN corepack enable
 
-# СНАЧАЛА копируем ВСЁ (включая submodules)
+# Копируем package.json и lockfile
+COPY package.json yarn.lock .yarnrc.yml ./
+
+# Копируем .yarn папку если есть
+COPY .yarn ./.yarn
+
+# Копируем submodules (важно для portal: зависимостей)
+COPY external ./external
+
+# Устанавливаем зависимости
+RUN yarn install --frozen-lockfile
+
+# Теперь копируем остальной код
 COPY . .
 
-# ТЕПЕРЬ ставим зависимости (теперь yarn найдет external/components)
-RUN yarn install --frozen-lockfile
+# Проверяем что переменные на месте (для дебага)
+RUN echo "Building with VITE_API_URL=$VITE_API_URL"
 
 # Собираем проект
 RUN yarn build
 
-# === Stage 2: Запуск (Production) ===
+# === Stage 2: Production ===
 FROM caddy:2-alpine
 
-# Копируем собранный сайт
+# Копируем собранные файлы
 COPY --from=builder /app/dist /usr/share/caddy
 
-# Открываем порты
 EXPOSE 80 443
 
-# Запускаем Caddy
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

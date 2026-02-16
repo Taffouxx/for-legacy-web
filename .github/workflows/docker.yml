@@ -2,11 +2,7 @@ name: Docker
 
 on:
   push:
-    branches:
-      - "master"
-      - "main"  # Добавил main на всякий случай
-    tags:
-      - "*"
+    branches: [ "master", "main" ]
   workflow_dispatch:
 
 env:
@@ -37,9 +33,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=sha
+          tags: type=raw,value=latest
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -53,11 +47,10 @@ jobs:
         with:
           context: .
           push: true
-          # Собираем только для amd64, чтобы было быстрее (если у тебя не arm сервер)
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # ВОТ ЗДЕСЬ МАГИЯ. Мы впекаем твои ссылки прямо в образ.
+          # ВШИВАЕМ ССЫЛКИ ПРЯМО ЗДЕСЬ
           build-args: |
             VITE_API_URL=https://chat.zeelo.fun/api
             VITE_WS_URL=wss://chat.zeelo.fun/ws

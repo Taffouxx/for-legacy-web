@@ -1,73 +1,64 @@
 name: Docker
 
 on:
-    push:
-        branches:
-            - "master"
-        tags:
-            - "*"
-        paths-ignore:
-            - ".github/**"
-            - "!.github/workflows/docker.yml"
-            - "!.github/workflows/preview_*.yml"
-            - ".vscode/**"
-            - ".gitignore"
-            - ".gitlab-ci.yml"
-            - "LICENSE"
-            - "README"
-    pull_request:
-        branches:
-            - "master"
-        paths-ignore:
-            - ".github/**"
-            - "!.github/workflows/docker.yml"
-            - "!.github/workflows/preview_*.yml"
-            - ".vscode/**"
-            - ".gitignore"
-            - ".gitlab-ci.yml"
-            - "LICENSE"
-            - "README"
-    workflow_dispatch:
+  push:
+    branches:
+      - "master"
+      - "main"  # Добавил main на всякий случай
+    tags:
+      - "*"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        if: github.event_name != 'pull_request'
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  submodules: "recursive"
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v3
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
-            - name: Docker meta
-              id: meta
-              uses: docker/metadata-action@v5
-              with:
-                  images: revoltchat/client, ghcr.io/revoltchat/client
-              env:
-                  DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-            - name: Login to DockerHub
-              uses: docker/login-action@v1
-              if: github.event_name != 'pull_request'
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
-            - name: Login to Github Container Registry
-              uses: docker/login-action@v3
-              if: github.event_name != 'pull_request'
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-            - name: Build and publish
-              uses: docker/build-push-action@v6
-              with:
-                  context: .
-                  push: ${{ github.event_name != 'pull_request' }}
-                  platforms: linux/amd64,linux/arm64
-                  tags: ${{ steps.meta.outputs.tags }}
-                  annotations: ${{ steps.meta.outputs.annotations }}
-                  labels: ${{ steps.meta.outputs.labels }}
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # Собираем только для amd64, чтобы было быстрее (если у тебя не arm сервер)
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # ВОТ ЗДЕСЬ МАГИЯ. Мы впекаем твои ссылки прямо в образ.
+          build-args: |
+            VITE_API_URL=https://chat.zeelo.fun/api
+            VITE_WS_URL=wss://chat.zeelo.fun/ws
+            VITE_APP_URL=https://chat.zeelo.fun

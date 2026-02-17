@@ -7,10 +7,10 @@ import usernameAnim from "../controllers/modals/components/legacy/usernameUpdate
 type Element =
     | string
     | {
-          type: "image";
-          src: string;
-          shadow?: boolean;
-      }
+        type: "image";
+        src: string;
+        shadow?: boolean;
+    }
     | { type: "element"; element: JSX.Element };
 
 export interface ChangelogPost {
@@ -20,61 +20,35 @@ export interface ChangelogPost {
 }
 
 export const changelogEntries: Record<number, ChangelogPost> = {
+
     1: {
-        date: new Date("2022-06-12T20:39:16.674Z"),
-        title: "Secure your account with 2FA",
+        date: new Date("2025-02-15T18:00:00.000Z"),
+        title: "Welcome to Zeelo! 🎉",
         content: [
-            "Two-factor authentication is now available to all users, you can now head over to settings to enable recovery codes and an authenticator app.",
-            {
-                type: "image",
-                src: "https://autumn.revolt.chat/attachments/E21kwmuJGcASgkVLiSIW0wV3ggcaOWjW0TQF7cdFNY/image.png",
-            },
-            "Once enabled, you will be prompted on login.",
-            {
-                type: "image",
-                src: "https://autumn.revolt.chat/attachments/LWRYoKR2tE1ggW_Lzm547P1pnrkNgmBaoCAfWvHE74/image.png",
-            },
-            "Other authentication methods coming later, stay tuned!",
-        ],
-    },
-    2: {
-        date: new Date("2023-02-23T20:00:00.000Z"),
-        title: "In-App Reporting Is Here",
-        content: [
-            "You can now report any user, server, or message directly from the app.",
-            {
-                type: "image",
-                src: "https://autumn.revolt.chat/attachments/ZuDVIjGiCl61Pk9XGk5qfc8-idN9EnFAk55DUQp713/the.png",
-                shadow: true,
-            },
-            "If you want to learn more about how we're making Revolt safer for you, check out our new blog post :point_right: [https://revolt.chat/posts/improving-user-safety](https://revolt.chat/posts/improving-user-safety)",
-        ],
-    },
-    3: {
-        date: new Date("2023-06-11T15:00:00.000Z"),
-        title: "Usernames are Changing",
-        content: [
-            {
-                type: "element",
-                element: (
-                    <Lottie
-                        animationData={usernameAnim}
-                        style={{
-                            background: "var(--secondary-background)",
-                            borderRadius: "6px",
-                        }}
-                    />
-                ),
-            },
-            "Revolt has undergone a significant change to its username system, transitioning from unique username handles to a new system of display names and usernames with four-digit number tags called discriminators. The four-digit number tags serve as identifiers to differentiate users with the same username, allowing individuals to select desired usernames that reflect their identity.",
-            {
-                type: "element",
-                element: (
-                    <a href="https://revolt.chat/posts/evolving-usernames">
-                        Read more on our blog!
-                    </a>
-                ),
-            },
+            "We're excited to introduce Zeelo - your new modern chat application built on the solid foundation of Revolt Chat!",
+            "✨ **New Features:**",
+            "• Completely redesigned user interface with smooth animations and modern design",
+            "• Enhanced home page with beautiful transitions and seasonal effects",
+            "• Redesigned server sidebar with compact, minimalist layout",
+            "• Modernized settings panel with rounded corners and clean aesthetics",
+            "• Improved hover effects and micro-interactions throughout the app",
+            "",
+            "🎨 **Design Improvements:**",
+            "• Smoother animations without bouncing effects",
+            "• Rounded corners and minimalist design language",
+            "• Better visual hierarchy and spacing",
+            "• Enhanced accessibility with keyboard navigation",
+            "",
+            "🔧 **Technical Updates:**",
+            "• Updated branding from Revolt to Zeelo across all interfaces",
+            "• Improved TypeScript compatibility and error handling",
+            "• Enhanced mobile responsiveness",
+            "• Performance optimizations for faster loading",
+            "",
+            "💝 **Special Thanks:**",
+            "Zeelo is built on the open-source core of Revolt Chat (Stoat). Huge thanks to the Revolt team for their amazing work and foundation that made this possible.",
+            "",
+            "We hope you enjoy the new Zeelo experience! Feel free to share your feedback and help us improve.",
         ],
     },
 };

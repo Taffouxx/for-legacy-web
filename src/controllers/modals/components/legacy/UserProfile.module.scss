@@ -9,6 +9,24 @@
     position: relative;
     background: #0b0b0b;
     /* Base dark color */
+
+    &.compact {
+        width: 100% !important;
+        max-width: 400px;
+        height: auto;
+        min-height: 500px;
+
+        .leftColumn {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .container {
+            padding: 0 !important;
+        }
+    }
 }
 
 /* Subtle banner at the top of the entire modal */
@@ -130,6 +148,7 @@
         margin-top: 4px;
         width: 100%;
         position: relative;
+        min-width: 0;
 
         button {
             flex-grow: 1;

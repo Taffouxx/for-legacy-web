@@ -40,12 +40,17 @@ export default function CreateInvite({
 
     // Generate an invite code
     useEffect(() => {
+        if (!target) {
+            modalController.push({ type: "error", error: "Missing channel target for invite generation." });
+            return;
+        }
+
         setProcessing(true);
 
         target
             .createInvite()
-            .then(({ _id }) => setCode(_id))
-            .catch((err) =>
+            .then(({ _id }: any) => setCode(_id))
+            .catch((err: any) =>
                 modalController.push({ type: "error", error: takeError(err) }),
             )
             .finally(() => setProcessing(false));

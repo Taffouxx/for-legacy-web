@@ -1,15 +1,12 @@
-import { Check } from "@styled-icons/boxicons-regular";
-import { Cog } from "@styled-icons/boxicons-solid";
+import { ChevronDown, Check, UserPlus } from "@styled-icons/boxicons-regular";
 import { observer } from "mobx-react-lite";
-import { Link } from "react-router-dom";
 import { Server } from "revolt.js";
 import styled, { css } from "styled-components/macro";
 
 import { Text } from "preact-i18n";
-
-import { IconButton } from "@revoltchat/ui";
-
+import { openContextMenu } from "preact-context-menu";
 import { modalController } from "../../controllers/modals/ModalController";
+
 import Tooltip from "./Tooltip";
 
 interface Props {
@@ -17,129 +14,204 @@ interface Props {
     background?: boolean;
 }
 
-const ServerBanner = styled.div<Omit<Props, "server">>`
+const Wrapper = styled.div`
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    position: relative;
+    user-select: none;
+`;
 
+const BannerBackground = styled.div<{ $url?: string }>`
+    height: 120px;
     background-size: cover;
-    background-repeat: norepeat;
-    background-position: center center;
+    background-position: center;
+    background-image: ${props => props.$url ? `url('${props.$url}')` : "none"};
+    background-color: var(--secondary-header);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
 
-    ${(props) =>
-        props.background
-            ? css`
-                  height: 120px;
-
-                  .container {
-                      background: linear-gradient(
-                          0deg,
-                          var(--secondary-background),
-                          transparent
-                      );
-                  }
-              `
-            : css`
-                  background-color: var(--secondary-header);
-              `}
-
-    .container {
-        height: var(--header-height);
-
-        display: flex;
-        align-items: center;
-        padding: 0 14px;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        gap: 8px;
-
-        .title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 1;
-
-            cursor: pointer;
-            color: var(--foreground);
-        }
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(to top, var(--secondary-background), transparent);
     }
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.1); /* Subtle darkening */
+    }
+`;
+
+const HeaderContainer = styled.div<{ $hasBanner: boolean }>`
+    position: relative;
+    z-index: 2;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 16px;
+    font-weight: 700;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    ${props => props.$hasBanner && css`
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+    `}
+
+    &:hover {
+        background: ${props => props.$hasBanner ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.05)"};
+        
+        ${props => props.$hasBanner && css`
+            backdrop-filter: blur(12px) saturate(180%);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        `}
+    }
+`;
+
+const ServerName = styled.div`
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 15px;
+    color: white;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const ActionButton = styled.div`
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: white;
+    opacity: 0.7;
+    transition: all 0.1s ease;
+    flex-shrink: 0;
+
+    &:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
+`;
+
+const PlaceholderSpacer = styled.div<{ $hasBanner: boolean }>`
+    height: ${props => props.$hasBanner ? "120px" : "var(--header-height)"};
+    flex-shrink: 0;
 `;
 
 export default observer(({ server }: Props) => {
     const bannerURL = server.generateBannerURL({ width: 480 });
+    const hasBanner = typeof bannerURL !== "undefined";
+
+    const openMenu = (e: any) => {
+        openContextMenu("Menu", { server_list: server._id }, e);
+    };
+
+    const openInvite = (e: any) => {
+        e.stopPropagation();
+        const client = server.client;
+        const channelId = server.channel_ids.find(id => {
+            const chan = client.channels.get(id);
+            return chan && chan.channel_type === "TextChannel";
+        });
+
+        if (channelId) {
+            modalController.push({
+                type: "create_invite",
+                target: client.channels.get(channelId)! as any
+            });
+        }
+    };
 
     return (
-        <ServerBanner
-            background={typeof bannerURL !== "undefined"}
-            style={{
-                backgroundImage: bannerURL ? `url('${bannerURL}')` : undefined,
-            }}>
-            <div className="container">
-                {server.flags && server.flags & 1 ? (
-                    <Tooltip
-                        content={
-                            <Text id="app.special.server-badges.official" />
-                        }
-                        placement={"bottom-start"}>
-                        <svg width="20" height="20">
-                            <image
-                                xlinkHref="/assets/badges/verified.svg"
-                                height="20"
-                                width="20"
-                            />
-                            <image
-                                xlinkHref="/assets/badges/revolt_r.svg"
-                                height="15"
-                                width="15"
-                                x="2"
-                                y="3"
-                                style={
-                                    "justify-content: center; align-items: center; filter: brightness(0);"
-                                }
-                            />
-                        </svg>
-                    </Tooltip>
-                ) : undefined}
-                {server.flags && server.flags & 2 ? (
-                    <Tooltip
-                        content={
-                            <Text id="app.special.server-badges.verified" />
-                        }
-                        placement={"bottom-start"}>
-                        <svg width="20" height="20">
-                            <image
-                                xlinkHref="/assets/badges/verified.svg"
-                                height="20"
-                                width="20"
-                            />
-                            <foreignObject x="2" y="2" width="15" height="15">
-                                <Check
-                                    size={15}
-                                    color="black"
-                                    strokeWidth={8}
+        <Wrapper>
+            <BannerBackground $url={bannerURL} />
+            <HeaderContainer
+                $hasBanner={hasBanner}
+                onClick={openMenu}
+            >
+                <ServerName>
+                    {server.flags && server.flags & 1 ? (
+                        <Tooltip
+                            content={
+                                <Text id="app.special.server-badges.official" />
+                            }
+                            placement={"bottom-start"}>
+                            <svg width="18" height="18" style={{ flexShrink: 0 }}>
+                                <image
+                                    xlinkHref="/assets/badges/verified.svg"
+                                    height="18"
+                                    width="18"
                                 />
-                            </foreignObject>
-                        </svg>
-                    </Tooltip>
-                ) : undefined}
-                <a
-                    className="title"
-                    onClick={() =>
-                        modalController.push({ type: "server_info", server })
-                    }>
+                                <image
+                                    xlinkHref="/assets/badges/revolt_r.svg"
+                                    height="14"
+                                    width="14"
+                                    x="2"
+                                    y="2.5"
+                                    style={{
+                                        filter: "brightness(0)",
+                                    }}
+                                />
+                            </svg>
+                        </Tooltip>
+                    ) : undefined}
+                    {server.flags && server.flags & 2 ? (
+                        <Tooltip
+                            content={
+                                <Text id="app.special.server-badges.verified" />
+                            }
+                            placement={"bottom-start"}>
+                            <svg width="18" height="18" style={{ flexShrink: 0 }}>
+                                <image
+                                    xlinkHref="/assets/badges/verified.svg"
+                                    height="18"
+                                    width="18"
+                                />
+                                <foreignObject x="2.5" y="2" width="13" height="13">
+                                    <Check
+                                        size={13}
+                                        color="black"
+                                        strokeWidth={10}
+                                    />
+                                </foreignObject>
+                            </svg>
+                        </Tooltip>
+                    ) : undefined}
                     {server.name}
-                </a>
-                {server.havePermission("ManageServer") && (
-                    <Link to={`/server/${server._id}/settings`}>
-                        <IconButton>
-                            <Cog size={20} />
-                        </IconButton>
-                    </Link>
-                )}
-            </div>
-        </ServerBanner>
+                    <ChevronDown size={14} style={{ opacity: 0.6, marginLeft: 'auto' }} />
+                </ServerName>
+
+                <Tooltip content={<Text id="app.context_menu.create_invite" />} placement="bottom">
+                    <ActionButton onClick={openInvite}>
+                        <UserPlus size={18} />
+                    </ActionButton>
+                </Tooltip>
+            </HeaderContainer>
+            <PlaceholderSpacer $hasBanner={hasBanner} />
+        </Wrapper>
     );
 });

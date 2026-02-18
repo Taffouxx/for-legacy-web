@@ -1,5 +1,5 @@
-import { ChevronRight, Trash } from "@styled-icons/boxicons-regular";
-import { Cog, UserVoice } from "@styled-icons/boxicons-solid";
+import { ChevronRight, Trash, UserPlus, Bell, Shield, Grid, Edit, LogOut, Lock, CheckSquare, Square, Plus } from "@styled-icons/boxicons-regular";
+import { Cog, UserVoice, Diamond } from "@styled-icons/boxicons-solid";
 import { isFirefox } from "react-device-detect";
 import { useHistory } from "react-router-dom";
 import { Channel, Message, Server, User, API, Permission, UserPermission, Member } from "revolt.js";
@@ -87,32 +87,39 @@ type Action =
     | { action: "create_channel"; target: Server }
     | { action: "create_category"; target: Server }
     | {
-          action: "create_invite";
-          target: Channel;
-      }
+        action: "create_invite";
+        target: Channel;
+    }
     | { action: "leave_group"; target: Channel }
     | {
-          action: "delete_channel";
-          target: Channel;
-      }
+        action: "delete_channel";
+        target: Channel;
+    }
     | { action: "close_dm"; target: Channel }
     | { action: "leave_server"; target: Server }
     | { action: "delete_server"; target: Server }
     | { action: "edit_identity"; target: Member }
     | {
-          action: "open_notification_options";
-          channel?: Channel;
-          server?: Server;
-      }
+        action: "open_notification_options";
+        channel?: Channel;
+        server?: Server;
+    }
     | { action: "open_settings" }
     | { action: "open_channel_settings"; id: string }
     | { action: "open_server_settings"; id: string }
     | { action: "open_server_channel_settings"; server: string; id: string }
     | {
-          action: "set_notification_state";
-          key: string;
-          state?: NotificationState;
-      }
+        action: "set_notification_state";
+        key: string;
+        state?: NotificationState;
+    }
+    | { action: "open_server_profile_settings"; serverId: string }
+    | { action: "open_app_directory"; serverId: string }
+    | { action: "toggle_show_all_channels"; serverId: string }
+    | { action: "toggle_hide_muted_channels"; serverId: string }
+    | { action: "open_server_privacy"; serverId: string }
+    | { action: "open_server_isolation"; serverId: string }
+    | { action: "report_raid"; serverId: string }
     | { action: "report"; target: User | Server | Message; messageId?: string };
 
 // ! FIXME: I dare someone to re-write this
@@ -459,12 +466,24 @@ export default function ContextMenus() {
                 case "open_server_settings":
                     history.push(`/server/${data.id}/settings`);
                     break;
+                case "open_server_profile_settings":
+                    history.push(`/settings/profile?server=${data.serverId}`);
+                    break;
                 case "report":
                     modalController.push({
                         type: "report",
                         target: data.target,
                         messageId: data.messageId,
                     });
+                    break;
+                case "report_raid":
+                case "open_server_privacy":
+                case "open_server_isolation":
+                case "open_app_directory":
+                case "toggle_show_all_channels":
+                case "toggle_hide_muted_channels":
+                    // Placeholders for now
+                    console.info(`Action ${data.action} not fully implemented yet.`);
                     break;
             }
         })().catch((err) => {
@@ -476,7 +495,7 @@ export default function ContextMenus() {
     }
 
     return (
-        <>
+        <Fragment>
             <ContextMenuWithData id="Menu" onClose={contextClick}>
                 {({
                     user: uid,
@@ -510,12 +529,41 @@ export default function ContextMenus() {
                                         "Open User in Admin Panel"
                                     ) : (
                                         <Text
-                                            id={`app.context_menu.${
-                                                locale ?? action.action
-                                            }`}
+                                            id={`app.context_menu.${locale ?? action.action
+                                                }`}
                                         />
                                     )}
                                 </span>
+                                {tip && <div className="tip">{tip}</div>}
+                            </MenuItem>,
+                        );
+                    }
+
+                    function generateItem(
+                        action: Action,
+                        locale: string,
+                        icon?: Children,
+                        color?: string,
+                        disabled?: boolean,
+                        tip?: Children,
+                    ) {
+                        lastDivider = false;
+                        elements.push(
+                            <MenuItem data={action} disabled={disabled}>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        width: "100%",
+                                        gap: "12px",
+                                        color,
+                                    }}>
+                                    <span>
+                                        <Text id={`app.context_menu.${locale}`} />
+                                    </span>
+                                    {icon}
+                                </div>
                                 {tip && <div className="tip">{tip}</div>}
                             </MenuItem>,
                         );
@@ -530,22 +578,127 @@ export default function ContextMenus() {
                     if (server_list) {
                         const server = client.servers.get(server_list)!;
                         if (server) {
-                            if (server.havePermission("ManageChannel")) {
-                                generateAction({
-                                    action: "create_category",
-                                    target: server,
-                                });
-                                generateAction({
-                                    action: "create_channel",
-                                    target: server,
-                                });
+                            generateItem(
+                                {
+                                    action: "toggle_hide_muted_channels",
+                                    serverId: server_list,
+                                },
+                                "hide_muted_channels",
+                                <CheckSquare size={18} />,
+                            );
+
+                            pushDivider();
+
+                            const permissions = server.permission || 0;
+                            if ((permissions & Permission.ManageChannel) || server.owner === userId) {
+                                generateItem(
+                                    {
+                                        action: "create_channel",
+                                        target: server,
+                                    },
+                                    "create_channel",
+                                    <Plus size={18} />,
+                                );
+
+                                generateItem(
+                                    {
+                                        action: "create_category",
+                                        target: server,
+                                    },
+                                    "create_category",
+                                    <Plus size={18} />,
+                                );
+
+                                pushDivider();
                             }
 
-                            if (server.havePermission("ManageServer"))
-                                generateAction({
-                                    action: "open_server_settings",
-                                    id: server_list,
-                                });
+                            const defaultChannel = server.channel_ids[0] ? client.channels.get(server.channel_ids[0]) : undefined;
+                            generateItem(
+                                {
+                                    action: "create_invite",
+                                    target: defaultChannel!,
+                                },
+                                "create_invite",
+                                <UserPlus size={18} />,
+                            );
+
+                            pushDivider();
+
+                            if ((permissions & Permission.ManageServer) || server.owner === userId) {
+                                generateItem(
+                                    {
+                                        action: "open_server_settings",
+                                        id: server_list,
+                                    },
+                                    "open_server_settings",
+                                    <Cog size={18} />,
+                                );
+                            }
+
+                            generateItem(
+                                { action: "open_app_directory", serverId: server_list },
+                                "app_directory",
+                                <Grid size={18} />,
+                            );
+
+                            pushDivider();
+
+                            generateItem(
+                                {
+                                    action: "open_notification_options",
+                                    server,
+                                },
+                                "open_notification_options",
+                                <Bell size={18} />,
+                            );
+
+                            generateItem(
+                                { action: "open_server_privacy", serverId: server_list },
+                                "server_privacy",
+                                <Shield size={18} />,
+                            );
+
+                            pushDivider();
+
+                            generateItem(
+                                {
+                                    action: "open_server_profile_settings",
+                                    serverId: server_list,
+                                },
+                                "edit_server_profile",
+                                <Edit size={18} />,
+                            );
+
+                            pushDivider();
+
+                            generateItem(
+                                { action: "open_server_isolation", serverId: server_list },
+                                "server_isolation",
+                                <Lock size={18} />,
+                            );
+
+                            generateItem(
+                                {
+                                    action: "toggle_show_all_channels",
+                                    serverId: server_list,
+                                },
+                                "show_all_channels",
+                                <CheckSquare size={18} />,
+                            );
+
+                            generateItem(
+                                { action: "report_raid", serverId: server_list },
+                                "report_raid",
+                                <Shield size={18} color="var(--error)" />,
+                                "var(--error)",
+                            );
+
+                            generateItem(
+                                { action: "leave_server", target: server },
+                                "leave_server",
+                                <LogOut size={18} color="var(--error)" />,
+                                "var(--error)",
+                            );
                         }
 
                         return elements;
@@ -570,8 +723,8 @@ export default function ContextMenus() {
                     const user = uid ? client.users.get(uid) : undefined;
                     const serverChannel =
                         targetChannel &&
-                        (targetChannel.channel_type === "TextChannel" ||
-                            targetChannel.channel_type === "VoiceChannel")
+                            (targetChannel.channel_type === "TextChannel" ||
+                                targetChannel.channel_type === "VoiceChannel")
                             ? targetChannel
                             : undefined;
 
@@ -583,8 +736,8 @@ export default function ContextMenus() {
                         (server
                             ? server.permission
                             : serverChannel
-                            ? serverChannel.server?.permission
-                            : 0) || 0;
+                                ? serverChannel.server?.permission
+                                : 0) || 0;
                     const userPermissions = (user ? user.permission : 0) || 0;
 
                     if (unread) {
@@ -878,8 +1031,8 @@ export default function ContextMenus() {
                                 type === "Image"
                                     ? "open_image"
                                     : type === "Video"
-                                    ? "open_video"
-                                    : "open_file",
+                                        ? "open_video"
+                                        : "open_file",
                             );
 
                             generateAction(
@@ -890,8 +1043,8 @@ export default function ContextMenus() {
                                 type === "Image"
                                     ? "save_image"
                                     : type === "Video"
-                                    ? "save_video"
-                                    : "save_file",
+                                        ? "save_video"
+                                        : "save_file",
                             );
 
                             generateAction(
@@ -927,8 +1080,8 @@ export default function ContextMenus() {
                             type === "Image"
                                 ? "open_image"
                                 : type === "Video"
-                                ? "open_video"
-                                : "open_file",
+                                    ? "open_video"
+                                    : "open_file",
                         );
 
                         generateAction(
@@ -939,8 +1092,8 @@ export default function ContextMenus() {
                             type === "Image"
                                 ? "save_image"
                                 : type === "Video"
-                                ? "save_video"
-                                : "save_file",
+                                    ? "save_video"
+                                    : "save_file",
                         );
 
                         generateAction(
@@ -1129,8 +1282,8 @@ export default function ContextMenus() {
                                         type: cid
                                             ? "channel"
                                             : message
-                                            ? "message"
-                                            : "user",
+                                                ? "message"
+                                                : "user",
                                     },
                                     "admin",
                                 );
@@ -1157,8 +1310,8 @@ export default function ContextMenus() {
                                 cid
                                     ? "copy_cid"
                                     : message
-                                    ? "copy_mid"
-                                    : "copy_uid",
+                                        ? "copy_mid"
+                                        : "copy_uid",
                             );
                         }
                     }
@@ -1189,7 +1342,7 @@ export default function ContextMenus() {
                                             }>
                                             <Column gap="0">
                                                 <span>
-                                                    {user.display_name ??
+                                                    {(user as any).displayName ??
                                                         user.username}
                                                 </span>
                                                 <span
@@ -1198,7 +1351,7 @@ export default function ContextMenus() {
                                                     }}>
                                                     {user.username}
                                                     {"#"}
-                                                    {user.discriminator ??
+                                                    {(user as any).discriminator ??
                                                         "0000"}
                                                 </span>
                                             </Column>
@@ -1287,6 +1440,6 @@ export default function ContextMenus() {
                 }}
             </ContextMenuWithData>
             <CMNotifications />
-        </>
+        </Fragment>
     );
 }

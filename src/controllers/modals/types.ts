@@ -104,6 +104,7 @@ export type Modal = {
       placeholderProfile?: API.UserProfile;
       forceGlobal?: boolean;
       serverId?: string;
+      compact?: boolean;
     }
     | {
       type: "create_bot";

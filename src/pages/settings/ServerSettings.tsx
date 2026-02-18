@@ -7,8 +7,11 @@ import {
     UserX,
     Trash,
     HappyBeaming,
+    Shield,
+    Planet,
 } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
+import { Fragment } from "preact";
 import { Route, Switch, useHistory, useParams } from "react-router-dom";
 
 import styles from "./Settings.module.scss";
@@ -30,6 +33,8 @@ import { Invites } from "./server/Invites";
 import { Members } from "./server/Members";
 import { Overview } from "./server/Overview";
 import { Roles } from "./server/Roles";
+import { Community } from "./server/Community";
+import { PartnerProgram } from "./server/PartnerProgram";
 
 export default observer(() => {
     const { server: sid } = useParams<{ server: string }>();
@@ -46,6 +51,9 @@ export default observer(() => {
             history.replace(`/server/${sid}/settings`);
         }
     }
+
+    const RouterSwitch = Switch as any;
+    const RouterRoute = Route as any;
 
     return (
         <GenericSettings
@@ -102,48 +110,71 @@ export default observer(() => {
                     icon: <UserX size={20} />,
                     title: <Text id="app.settings.server_pages.bans.title" />,
                 },
+                {
+                    category: (
+                        <Text id="app.settings.server_pages.community.category" />
+                    ),
+                    id: "community",
+                    icon: <Planet size={20} />,
+                    title: (
+                        <Text id="app.settings.server_pages.community.title" />
+                    ),
+                },
+                {
+                    id: "partner",
+                    icon: <Shield size={20} />,
+                    title: (
+                        <Text id="app.settings.server_pages.partner.title" />
+                    ),
+                },
             ]}
             children={
-                <Switch>
-                    <Route path="/server/:server/settings/categories">
+                <RouterSwitch>
+                    <RouterRoute path="/server/:server/settings/categories">
                         <Categories server={server} />
-                    </Route>
-                    <Route path="/server/:server/settings/members">
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/members">
                         <RequiresOnline>
                             <Members server={server} />
                         </RequiresOnline>
-                    </Route>
-                    <Route path="/server/:server/settings/invites">
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/invites">
                         <RequiresOnline>
                             <Invites server={server} />
                         </RequiresOnline>
-                    </Route>
-                    <Route path="/server/:server/settings/bans">
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/bans">
                         <RequiresOnline>
                             <Bans server={server} />
                         </RequiresOnline>
-                    </Route>
-                    <Route path="/server/:server/settings/roles">
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/roles">
                         <RequiresOnline>
                             <Roles server={server} />
                         </RequiresOnline>
-                    </Route>
-                    <Route path="/server/:server/settings/emojis">
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/emojis">
                         <RequiresOnline>
                             <Emojis server={server} />
                         </RequiresOnline>
-                    </Route>
-                    <Route>
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/community">
+                        <Community server={server} />
+                    </RouterRoute>
+                    <RouterRoute path="/server/:server/settings/partner">
+                        <PartnerProgram server={server} />
+                    </RouterRoute>
+                    <RouterRoute>
                         <Overview server={server} />
-                    </Route>
-                </Switch>
+                    </RouterRoute>
+                </RouterSwitch>
             }
             category="server_pages"
             switchPage={switchPage}
             defaultPage="overview"
             custom={
                 owner ? (
-                    <>
+                    <div>
                         <LineDivider />
                         <ButtonItem
                             onClick={() =>
@@ -157,7 +188,7 @@ export default observer(() => {
                             <Trash size={20} />
                             <Text id="app.context_menu.delete_server" />
                         </ButtonItem>
-                    </>
+                    </div>
                 ) : undefined
             }
             showExitButton

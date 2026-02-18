@@ -17,7 +17,7 @@ import { IS_REVOLT } from "../../../version";
 export default observer(() => {
     const client = useClient();
     const state = useApplicationState();
-    const { server: server_id } = useParams<{ server?: string }>();
+    const server_id = useParams<{ server?: string }>().server;
 
     const createServer = useCallback(
         () =>

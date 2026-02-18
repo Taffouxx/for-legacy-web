@@ -41,6 +41,7 @@ export const UserProfile = observer(
         placeholderProfile,
         forceGlobal,
         serverId: propsServerId,
+        compact,
         ...props
     }: ModalProps<"user_profile">) => {
         const [profile, setProfile] = useState<
@@ -182,6 +183,7 @@ export const UserProfile = observer(
                         status
                         animate
                         hover={typeof user.avatar !== "undefined"}
+                        override={member?.avatarURL}
                     />
                 </div>
 
@@ -189,7 +191,7 @@ export const UserProfile = observer(
                     <div className={styles.identity}>
                         <div className={styles.details}>
                             <span className={styles.displayname}>
-                                {(user as any).display_name ?? user.username}
+                                {member?.nickname ?? (user as any).display_name ?? user.username}
                             </span>
                             <div className={styles.nameRow}>
                                 <span className={styles.username}>
@@ -335,21 +337,37 @@ export const UserProfile = observer(
             </div>
         );
 
-        return (
-            <Modal
-                {...props}
-                nonDismissable={isPlaceholder}
-                transparent
-                className={styles.modal}
-                maxWidth="900px">
+        const content = (
+            <div
+                className={`${styles.modal} ${compact ? styles.compact : ""}`}
+                style={isPlaceholder ? {
+                    position: 'relative',
+                    width: '100%',
+                    height: compact ? 'auto' : '100%',
+                    minHeight: compact ? '500px' : '600px',
+                    borderRadius: '24px',
+                    overflow: 'hidden'
+                } : {}}>
                 <div
                     className={styles.modalBanner}
                     style={{ backgroundImage: bannerURL ? `url(${bannerURL})` : 'none' }}
                 />
-                <div className={styles.container}>
+                <div className={styles.container} style={compact ? { padding: '16px' } : {}}>
                     {leftPanel as any}
-                    {rightPanel as any}
+                    {!compact && (rightPanel as any)}
                 </div>
+            </div>
+        );
+
+        if (isPlaceholder) return content;
+
+        return (
+            <Modal
+                {...props}
+                transparent
+                className={styles.modal}
+                maxWidth="900px">
+                {content}
             </Modal>
         );
     },

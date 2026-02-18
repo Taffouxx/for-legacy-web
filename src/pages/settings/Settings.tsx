@@ -22,6 +22,7 @@ import {
 } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
 import { Route, Switch, useHistory } from "react-router-dom";
+import { Fragment as PFragment } from "preact";
 import { LIBRARY_VERSION } from "revolt.js";
 import styled from "styled-components/macro";
 
@@ -88,6 +89,7 @@ const AccountHeader = styled.div`
             .full {
                 font-size: 14px;
                 font-weight: 600;
+                color: var(--secondary-foreground);
             }
         }
     }
@@ -96,10 +98,15 @@ const AccountHeader = styled.div`
         display: flex;
         align-items: center;
         background: var(--tertiary-background);
+        transition: background 150ms ease;
 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        &:hover {
+            background: var(--hover);
+        }
 
         .status {
             padding-inline-start: 12px;
@@ -133,6 +140,10 @@ export default observer(() => {
             history.replace(`/settings`);
         }
     }
+
+    const S = Switch as any;
+    const R = Route as any;
+    const F = PFragment as any;
 
     return (
         <GenericSettings
@@ -202,7 +213,7 @@ export default observer(() => {
                 },
                 {
                     divider: true,
-                    category: "revolt",
+                    category: "ZEELO",
                     id: "bots",
                     icon: <Bot size={20} />,
                     title: <Text id="app.settings.pages.bots.title" />,
@@ -214,55 +225,55 @@ export default observer(() => {
                 },
             ]}
             children={
-                <Switch>
-                    <Route path="/settings/profile">
+                <S>
+                    <R path="/settings/profile">
                         <Profile />
-                    </Route>
-                    <Route path="/settings/sessions">
+                    </R>
+                    <R path="/settings/sessions">
                         <RequiresOnline>
                             <Sessions />
                         </RequiresOnline>
-                    </Route>
-                    <Route path="/settings/appearance">
+                    </R>
+                    <R path="/settings/appearance">
                         <Appearance />
-                    </Route>
-                    <Route path="/settings/plugins">
+                    </R>
+                    <R path="/settings/plugins">
                         <PluginsPage />
-                    </Route>
-                    <Route path="/settings/audio">
+                    </R>
+                    <R path="/settings/audio">
                         <Audio />
-                    </Route>
-                    <Route path="/settings/notifications">
+                    </R>
+                    <R path="/settings/notifications">
                         <Notifications />
-                    </Route>
-                    <Route path="/settings/language">
+                    </R>
+                    <R path="/settings/language">
                         <Languages />
-                    </Route>
-                    <Route path="/settings/sync">
+                    </R>
+                    <R path="/settings/sync">
                         <Sync />
-                    </Route>
-                    <Route path="/settings/native">
+                    </R>
+                    <R path="/settings/native">
                         <Native />
-                    </Route>
-                    <Route path="/settings/experiments">
+                    </R>
+                    <R path="/settings/experiments">
                         <ExperimentsPage />
-                    </Route>
-                    <Route path="/settings/bots">
+                    </R>
+                    <R path="/settings/bots">
                         <MyBots />
-                    </Route>
-                    <Route path="/settings/feedback">
+                    </R>
+                    <R path="/settings/feedback">
                         <Feedback />
-                    </Route>
-                    <Route path="/">
+                    </R>
+                    <R path="/">
                         <Account />
-                    </Route>
-                </Switch>
+                    </R>
+                </S>
             }
             defaultPage="account"
             switchPage={switchPage}
             category="pages"
             custom={
-                <>
+                <F>
                     <ButtonItem
                         compact
                         onClick={() =>
@@ -271,24 +282,6 @@ export default observer(() => {
                         <ListUl size={20} />
                         <Text id="app.special.modals.changelogs.title" />
                     </ButtonItem>
-                    <a
-                        href="https://github.com/revoltchat"
-                        target="_blank"
-                        rel="noreferrer">
-                        <ButtonItem compact>
-                            <Github size={20} />
-                            <Text id="app.settings.pages.source_code" />
-                        </ButtonItem>
-                    </a>
-                    <a
-                        href="https://wiki.revolt.chat/notes/project/financial-support/"
-                        target="_blank"
-                        rel="noreferrer">
-                        <ButtonItem className={styles.donate} compact>
-                            <Coffee size={20} />
-                            <Text id="app.settings.pages.donate.title" />
-                        </ButtonItem>
-                    </a>
                     <LineDivider compact />
                     <ButtonItem
                         onClick={clientController.logoutCurrent}
@@ -298,59 +291,34 @@ export default observer(() => {
                         <Text id="app.settings.pages.logOut" />
                     </ButtonItem>
                     <div className={styles.version}>
-                        <span className={styles.revision}>
-                            <a
-                                href={`${REPO_URL}/${GIT_REVISION}`}
-                                target="_blank"
-                                rel="noreferrer">
-                                {GIT_REVISION.substr(0, 7)}
-                            </a>
-                            {` `}
-                            <a
-                                href={
-                                    GIT_BRANCH !== "DETACHED"
-                                        ? `https://github.com/revoltchat/revite/tree/${GIT_BRANCH}`
-                                        : undefined
-                                }
-                                target="_blank"
-                                rel="noreferrer">
-                                ({GIT_BRANCH})
-                            </a>
-                        </span>
                         <span>
-                            {GIT_BRANCH === "production" ? "Stable" : "Nightly"}{" "}
-                            {APP_VERSION}
+                            ZEELO {APP_VERSION}
                         </span>
-                        {window.isNative && (
-                            <span>Native: {window.nativeVersion}</span>
-                        )}
-                        <span>
-                            API: {client.configuration?.revolt ?? "N/A"}
-                        </span>
-                        <span>revolt.js: {LIBRARY_VERSION}</span>
                     </div>
-                </>
+                </F>
             }
             indexHeader={
                 <AccountHeader>
                     <div className="account">
-                        <UserIcon
-                            size={64}
-                            target={client.user!}
-                            status
-                            onClick={() => openContextMenu("Status")}
-                        />
+                        {client.user && (
+                            <UserIcon
+                                size={64}
+                                target={client.user}
+                                status
+                                onClick={() => openContextMenu("Status")}
+                            />
+                        )}
                         <div className="details">
                             <span className="new">
-                                {client.user.display_name ??
-                                    client.user.username}
+                                {(client.user as any)?.display_name ??
+                                    client.user?.username}
                             </span>
                             <span className="full">
-                                {client.user.username}
+                                {client.user?.username}
                                 {"#"}
-                                {client.user.discriminator}
+                                {(client.user as any)?.discriminator}
                             </span>
-                            <UserStatus user={client.user!} />
+                            {client.user && <UserStatus user={client.user} />}
                         </div>
                     </div>
                     <div className="statusChanger">
@@ -363,7 +331,7 @@ export default observer(() => {
                             }>
                             Change your status...
                         </a>
-                        {client.user!.status?.text && (
+                        {client.user?.status?.text && (
                             <Trash
                                 size={24}
                                 onClick={() =>

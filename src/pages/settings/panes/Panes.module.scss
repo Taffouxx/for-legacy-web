@@ -3,13 +3,20 @@
         position: relative;
         margin-top: 8px;
         margin-bottom: 15px;
-        gap: 16px;
+        gap: 20px;
         width: 100%;
-        padding: 12px 10px;
+        padding: 16px 14px;
         display: flex;
         overflow: hidden;
         align-items: center;
         border-radius: var(--border-radius);
+        background: var(--secondary-header);
+        border: 1px solid var(--tertiary-background);
+        transition: border-color 150ms ease;
+
+        &:hover {
+            border-color: var(--secondary-foreground);
+        }
 
         .container {
             display: flex;
@@ -40,7 +47,8 @@
             gap: 2px;
             flex-direction: column;
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--foreground);
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
@@ -63,7 +71,7 @@
             gap: 4px;
             color: var(--tertiary-foreground);
 
-            > :nth-child(2) {
+            >:nth-child(2) {
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
@@ -72,10 +80,15 @@
             a {
                 color: inherit;
                 cursor: pointer;
+                transition: color 150ms ease;
 
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
+
+                &:hover {
+                    color: var(--foreground);
+                }
             }
         }
     }
@@ -95,36 +108,40 @@
     .details {
         display: flex;
         padding: 1em 0;
-        gap: 10px;
+        gap: 12px;
         flex-direction: column;
 
-        /*border-top: 1px solid var(--secondary-header);
-        border-width: 100%;*/
-
-        > div {
+        >div {
             gap: 12px;
-            /*padding: 4px;*/
-            padding: 8px 12px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             flex-direction: row;
             background: var(--secondary-header);
             border-radius: var(--border-radius);
+            border: 1px solid var(--tertiary-background);
+            transition: background 150ms ease, border-color 150ms ease;
 
-            > svg {
+            &:hover {
+                background: var(--hover);
+                border-color: var(--secondary-foreground);
+            }
+
+            >svg {
                 flex-shrink: 0;
+                color: var(--secondary-foreground);
             }
         }
 
         p {
             margin: 0;
             font-size: 1rem;
-            color: var(--tertiary-foreground);
+            color: var(--secondary-foreground);
         }
     }
 
     .preview {
-        background: var(--background);
+        background: var(--primary-background);
         border-radius: var(--border-radius);
         width: 100%;
         display: flex;
@@ -132,8 +149,9 @@
         align-items: center;
         justify-content: center;
         grid-template-columns: minmax(auto, 100%);
+        border: 1px solid var(--tertiary-background);
 
-        > div {
+        >div {
             width: 100%;
             max-width: 560px;
             transform: scale(0.9);
@@ -143,6 +161,7 @@
     @media only screen and (max-width: 600px) {
         .preview {
             background: none;
+            border: none;
             padding: 0;
         }
     }
@@ -150,8 +169,6 @@
     .badgePicker {
         display: flex;
         margin-bottom: 20px;
-
-        //padding-bottom: 8px;
         position: relative;
 
         .container {
@@ -162,41 +179,45 @@
 
         .check {
             cursor: pointer;
-
             flex-shrink: 0;
-            height: 50px;
-            width: 50px;
+            height: 42px;
+            width: 42px;
             background: var(--secondary-background);
             border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 150ms ease, background 150ms ease;
+            border: 1px solid var(--tertiary-background);
+
+            &:hover {
+                transform: scale(1.1);
+                background: var(--hover);
+            }
 
             &:nth-child(2) {
-                border: 3px solid var(--accent);
+                border: 2px solid var(--accent);
             }
 
             &:nth-child(1) {
                 opacity: 0.5;
                 cursor: not-allowed;
+
+                &:hover {
+                    transform: none;
+                }
             }
         }
     }
-
-    // TOFIX: need to merge overlay 1 and 2 later
 
     .overlay {
         position: absolute;
         flex-shrink: 0;
         width: 8px;
-        background: red;
         height: 100%;
-
-        background: linear-gradient(
-            to right,
-            var(--primary-background),
-            transparent
-        );
+        background: linear-gradient(to right,
+                var(--background),
+                transparent);
     }
 
     .overlay2 {
@@ -204,14 +225,10 @@
         right: 0;
         flex-shrink: 0;
         width: 8px;
-        background: red;
         height: 100%;
-
-        background: linear-gradient(
-            to left,
-            var(--primary-background),
-            transparent
-        );
+        background: linear-gradient(to left,
+                var(--background),
+                transparent);
     }
 
     .row {
@@ -240,10 +257,17 @@
 
         svg {
             flex-shrink: 0;
+            color: var(--tertiary-foreground);
         }
 
-        a:hover {
-            text-decoration: underline;
+        a {
+            color: var(--tertiary-foreground);
+            transition: color 150ms ease;
+
+            &:hover {
+                text-decoration: underline;
+                color: var(--foreground);
+            }
         }
 
         h5 {
@@ -271,7 +295,7 @@
             padding: 0;
             flex-direction: column;
 
-            > button {
+            >button {
                 width: 100%;
             }
         }
@@ -283,6 +307,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+
     .audioRow {
         display: flex;
         gap: 20px;
@@ -292,13 +317,13 @@
             width: 50%;
         }
     }
+
     .audioBox {
         display: flex;
         flex-direction: column;
-        /*gap: 15px;*/
         align-items: center;
 
-        > button {
+        >button {
             margin-top: 20px;
             width: 100%;
         }
@@ -323,7 +348,7 @@
     opacity: 0.5;
     margin-top: -12px;
 
-    > img {
+    >img {
         height: 24px;
     }
 }
@@ -337,7 +362,7 @@
     justify-content: space-between;
     gap: 5px;
 
-    > div {
+    >div {
         height: 8px;
         width: 24px;
         background: var(--secondary-background);
@@ -360,25 +385,33 @@
             svg {
                 margin-top: 1px;
                 flex-shrink: 0;
+                color: var(--secondary-foreground);
             }
         }
     }
 
     .entry {
-        padding: 12px;
+        padding: 16px;
         display: flex;
         margin: 10px 0;
         flex-direction: column;
         overflow: hidden;
         border-radius: var(--border-radius);
         background: var(--secondary-header);
+        border: 1px solid var(--tertiary-background);
+        transition: background 150ms ease, border-color 150ms ease;
+
+        &:hover {
+            background: var(--hover);
+        }
 
         &[data-active="true"] {
             color: var(--primary-background);
             background: var(--accent);
+            border-color: var(--accent);
             margin-bottom: 25px;
 
-            .session .detail .info > input {
+            .session .detail .info>input {
                 &:focus {
                     border-bottom: 2px solid var(--primary-background);
                 }
@@ -407,6 +440,7 @@
 
             &:focus {
                 border-bottom: 2px solid var(--accent);
+                box-shadow: none;
             }
 
             &[data-active="true"] {
@@ -416,7 +450,7 @@
 
         .label {
             margin-bottom: 8px;
-            color: var(--primary-text);
+            color: var(--foreground);
             font-size: 0.75rem;
             font-weight: 600;
         }
@@ -438,14 +472,14 @@
 
             .time {
                 font-size: 0.75rem;
-                color: var(--teriary-text);
+                color: var(--tertiary-foreground);
                 text-overflow: ellipsis;
                 overflow: hidden;
             }
         }
     }
 
-    > button {
+    >button {
         margin-top: 20px;
     }
 
@@ -455,12 +489,12 @@
             flex-direction: column;
             gap: 16px;
 
-            > button {
+            >button {
                 width: 100%;
             }
         }
 
-        > button {
+        >button {
             width: 100%;
         }
     }
@@ -480,15 +514,16 @@
             background: var(--secondary-header);
             border-radius: var(--border-radius);
             margin-top: 0;
-
-            transition: 0.1s ease background-color;
+            border: 1px solid transparent;
+            transition: 150ms ease background-color, 150ms ease border-color;
 
             &:hover {
-                background: var(--secondary-background);
+                background: var(--hover);
+                border-color: var(--tertiary-background);
             }
         }
 
-        .entry > div div {
+        .entry>div div {
             gap: 8px;
             display: flex;
             align-items: center;
@@ -497,19 +532,19 @@
             .flag {
                 display: flex;
 
-                > div {
+                >div {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                 }
 
-                > img {
+                >img {
                     height: 28px !important;
                 }
             }
 
             .description {
-                color: var(--primary-text);
+                color: var(--foreground);
             }
         }
     }
@@ -528,6 +563,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        color: var(--tertiary-foreground);
     }
 }
 
@@ -541,11 +577,13 @@
         justify-content: center;
         align-items: center;
         margin-top: 1rem;
+        color: var(--tertiary-foreground);
     }
 }
 
 .myBots {
     margin-top: 10px;
+
     .botList {
         display: flex;
         flex-direction: column;
@@ -557,9 +595,15 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        background: var(--secondary-background);
-        padding: 12px;
+        background: var(--secondary-header);
+        padding: 16px;
         border-radius: var(--border-radius);
+        border: 1px solid var(--tertiary-background);
+        transition: border-color 150ms ease;
+
+        &:hover {
+            border-color: var(--secondary-foreground);
+        }
     }
 
     .botSection {
@@ -568,10 +612,11 @@
         flex-direction: column;
         gap: 5px;
 
-        > h5 {
+        >h5 {
             margin-bottom: 1em;
         }
-        > h3 {
+
+        >h3 {
             margin-bottom: 0;
         }
 
@@ -616,10 +661,7 @@
             flex-direction: column;
             font-size: 1.2rem;
             font-weight: 600;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-
+            color: var(--foreground);
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
@@ -653,7 +695,7 @@
             white-space: nowrap;
             overflow: hidden;
 
-            > :nth-child(2) {
+            >:nth-child(2) {
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
@@ -680,7 +722,7 @@
         .infocontainer {
             flex-direction: column;
 
-            > button {
+            >button {
                 width: 100%;
             }
         }
@@ -704,7 +746,7 @@ section {
     font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--secondary-foreground);
+    color: var(--tertiary-foreground);
 
     .new {
         font-size: 10px;

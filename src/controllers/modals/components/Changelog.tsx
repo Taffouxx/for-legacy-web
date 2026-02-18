@@ -1,47 +1,16 @@
 import dayjs from "dayjs";
-import styled, { css } from "styled-components";
-
 import { Text } from "preact-i18n";
 import { useMemo, useState } from "preact/hooks";
 
 import { CategoryButton, Column, Modal } from "@revoltchat/ui";
-import type { Action } from "@revoltchat/ui/esm/components/design/atoms/display/Modal";
+import { X as CloseIcon } from "@styled-icons/boxicons-regular/X";
 
-import { noopTrue } from "../../../lib/js";
-
-import {
-    changelogEntries,
-    changelogEntryArray,
-    ChangelogPost,
-} from "../../../assets/changelogs";
+import { changelogEntries } from "../../../assets/changelogs";
 import Markdown from "../../../components/markdown/Markdown";
+import { useTranslation } from "../../../lib/i18n";
 import { ModalProps } from "../types";
 
-const Image = styled.img<{ shadow?: boolean }>`
-    border-radius: var(--border-radius);
-
-    ${(props) =>
-        props.shadow &&
-        css`
-            filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.5));
-        `}
-`;
-
-function RenderLog({ post }: { post: ChangelogPost }) {
-    return (
-        <Column>
-            {post.content.map((entry) =>
-                typeof entry === "string" ? (
-                    <Markdown content={entry} />
-                ) : entry.type === "element" ? (
-                    entry.element
-                ) : (
-                    <Image src={entry.src} shadow={entry.shadow} />
-                ),
-            )}
-        </Column>
-    );
-}
+import styles from "./Changelog.module.scss";
 
 /**
  * Changelog modal
@@ -49,68 +18,96 @@ function RenderLog({ post }: { post: ChangelogPost }) {
 export default function Changelog({
     initial,
     onClose,
-    signal,
 }: ModalProps<"changelog">) {
-    const [log, setLog] = useState(initial);
+    // Determine the initially selected log index.
+    // If 'initial' is provided, we use it (assuming it's a 1-based index for backward compat or just newest).
+    // Usually 'initial' is the log number. If not set, we show the first entry (newest).
+    const [logIndex, setLogIndex] = useState<number | undefined>(initial ? initial - 1 : 0);
+    const t = useTranslation();
 
     const entry = useMemo(
-        () => (log ? changelogEntries[log] : undefined),
-        [log],
+        () => (typeof logIndex === 'number' ? changelogEntries[logIndex] : undefined),
+        [logIndex],
     );
-
-    const actions = useMemo(() => {
-        const arr: Action[] = [
-            {
-                palette: "primary",
-                children: <Text id="app.special.modals.actions.close" />,
-                onClick: noopTrue,
-            },
-        ];
-
-        if (log) {
-            arr.push({
-                palette: "plain-secondary",
-                children: <Text id="app.special.modals.changelogs.older" />,
-                onClick: () => {
-                    setLog(undefined);
-                    return false;
-                },
-            });
-        }
-
-        return arr;
-    }, [log]);
 
     return (
         <Modal
-            title={
-                entry?.title ?? (
-                    <Text id="app.special.modals.changelogs.title" />
-                )
-            }
-            description={
-                entry ? (
-                    dayjs(entry.date).calendar()
-                ) : (
-                    <Text id="app.special.modals.changelogs.description" />
-                )
-            }
-            actions={actions}
             onClose={onClose}
-            signal={signal}>
-            {entry ? (
-                <RenderLog post={entry} />
-            ) : (
-                <Column>
-                    {changelogEntryArray.map((entry, index) => (
-                        <CategoryButton
-                            key={index}
-                            onClick={() => setLog(index + 1)}>
-                            {entry.title}
-                        </CategoryButton>
-                    ))}
-                </Column>
-            )}
+            disableDirectRendering // We handle the layout ourselves
+            className={styles.modal}>
+            <div className={styles.header}>
+                <div className={styles.closeButton} onClick={onClose}>
+                    <CloseIcon size={24} />
+                </div>
+                {entry ? (
+                    <>
+                        <h1><Text id="app.special.modals.changelogs.title" /></h1>
+                        <div className={styles.date}>
+                            {dayjs(entry.date).format("D MMMM YYYY [г.]")}
+                        </div>
+                    </>
+                ) : (
+                    <h1><Text id="app.special.modals.changelogs.title" /></h1>
+                )}
+            </div>
+
+            <div className={styles.scrollArea}>
+                {entry ? (
+                    <div className={styles.content}>
+                        {entry.banner && (
+                            <img src={entry.banner} className={styles.banner} alt="Changelog banner" />
+                        )}
+                        <Column>
+                            {entry.content.map((entryItem, idx) => {
+                                if (typeof entryItem === "string") {
+                                    if (entryItem === "") return <div style={{ height: '8px' }} />;
+
+                                    // Localize the string key
+                                    const localizedContent = t(`app.special.modals.changelogs.entries.${entry.title}.${entryItem}`);
+
+                                    let contentClass = "";
+                                    if (entryItem.startsWith("section_features")) contentClass = styles.categoryNew;
+                                    else if (entryItem.startsWith("section_design")) contentClass = styles.categoryImproved;
+                                    else if (entryItem.startsWith("section_fixed")) contentClass = styles.categoryFixed;
+
+                                    return (
+                                        <div className={contentClass} key={`${entryItem}-${idx}`}>
+                                            <Markdown
+                                                content={localizedContent || entryItem}
+                                            />
+                                        </div>
+                                    );
+                                } else if (entryItem.type === "element") {
+                                    return entryItem.element;
+                                } else {
+                                    return (
+                                        <img
+                                            key={idx}
+                                            src={entryItem.src}
+                                            style={{
+                                                borderRadius: '8px',
+                                                boxShadow: entryItem.shadow ? '0 4px 12px rgba(0,0,0,0.5)' : 'none'
+                                            }}
+                                        />
+                                    );
+                                }
+                            })}
+                        </Column>
+                    </div>
+                ) : (
+                    <Column>
+                        {changelogEntries.map((entry, index) => (
+                            <CategoryButton
+                                key={index}
+                                onClick={() => setLogIndex(index)}>
+                                <Text id={`app.special.modals.changelogs.entries.${entry.title}.title`} />
+                            </CategoryButton>
+                        ))}
+                    </Column>
+                )}
+            </div>
+
+            {/* User requested removal of the "Subscribe" footer section */}
         </Modal>
     );
 }

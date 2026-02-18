@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { User, API } from "revolt.js";
 import styled, { css } from "styled-components/macro";
 
-import { Ref } from "preact";
+import { Ref, Fragment as PFragment } from "preact";
 import { Text } from "preact-i18n";
 
 import { internalEmit } from "../../../lib/eventEmitter";
@@ -41,6 +41,7 @@ type UsernameProps = Omit<
 
     override?: string;
     innerRef?: Ref<any>;
+    children?: any;
 };
 
 const Name = styled.span<{ colour?: string | null }>`
@@ -68,6 +69,7 @@ export const Username = observer(
         override,
         ...otherProps
     }: UsernameProps) => {
+        const F = PFragment as any;
         let username =
             (user as unknown as { display_name: string })?.display_name ??
             user?.username;
@@ -110,7 +112,7 @@ export const Username = observer(
         }
 
         const el = (
-            <>
+            <F>
                 <Name {...otherProps} ref={innerRef} colour={color}>
                     {prefixAt ? "@" : undefined}
                     {masquerade?.name ?? username ?? (
@@ -134,12 +136,12 @@ export const Username = observer(
                         />
                     </Tooltip>
                 )}
-            </>
+            </F>
         );
 
         if (user?.bot) {
             return (
-                <>
+                <F>
                     {el}
                     <BotBadge>
                         {masquerade ? (
@@ -148,18 +150,18 @@ export const Username = observer(
                             <Text id="app.main.channel.bot" />
                         )}
                     </BotBadge>
-                </>
+                </F>
             );
         }
 
         if (override) {
             return (
-                <>
+                <F>
                     {el}
                     <BotBadge>
                         <Text id="app.main.channel.bot" />
                     </BotBadge>
-                </>
+                </F>
             );
         }
 
@@ -179,7 +181,9 @@ export default function UserShort({
     prefixAt?: boolean;
     masquerade?: API.Masquerade;
     showServerIdentity?: boolean;
+    children?: any;
 }) {
+    const F = PFragment as any;
     const openProfile = () =>
         user &&
         modalController.push({ type: "user_profile", user_id: user._id });
@@ -194,7 +198,7 @@ export default function UserShort({
     };
 
     return (
-        <>
+        <F>
             <UserIcon
                 target={user}
                 size={size ?? 24}
@@ -209,6 +213,6 @@ export default function UserShort({
                 onClick={handleUserClick}
                 showServerIdentity={showServerIdentity}
             />
-        </>
+        </F>
     );
 }

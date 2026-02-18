@@ -4,12 +4,15 @@
         transform: scale(1.2);
         opacity: 0;
     }
+
     20% {
         opacity: 0.5;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         transform: scale(1);
     }
@@ -19,15 +22,30 @@
     0% {
         transform: scale(1);
     }
+
     20% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.5;
     }
+
     100% {
         opacity: 0;
         transform: scale(1.2);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 
@@ -53,6 +71,7 @@
         .scrollbox {
             width: 100%;
         }
+
         .version {
             place-items: center;
         }
@@ -103,7 +122,26 @@
     display: flex;
     user-select: none;
     flex-direction: row;
-    background: var(--primary-background);
+
+    background: var(--background);
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--tertiary-background);
+        }
+    }
 
     .scrollbox {
         overflow-y: scroll;
@@ -126,15 +164,14 @@
 
         .container {
             min-width: 218px;
-
-            padding: 80px 8px;
+            padding: 80px 12px;
             display: flex;
             gap: 2px;
             flex-direction: column;
         }
 
         .divider {
-            height: 30px;
+            height: 20px;
         }
 
         .donate {
@@ -147,14 +184,14 @@
         }
 
         .version {
-            margin: 1rem 12px 0;
+            margin: 1.5rem 12px 0;
             font-size: 0.625rem;
-            color: var(--secondary-foreground);
+            color: var(--tertiary-foreground);
             font-family: var(--monospace-font), monospace;
             user-select: text;
             display: grid;
 
-            > div {
+            >div {
                 gap: 2px;
                 display: flex;
                 flex-direction: column;
@@ -179,9 +216,9 @@
 
         .contentcontainer {
             display: flex;
-            gap: 13px;
+            gap: 20px;
             max-width: 740px;
-            padding: 80px 32px;
+            padding: 80px 40px;
             width: 100%;
             flex-direction: column;
 
@@ -193,32 +230,30 @@
             margin: 14px 0;
         }
 
-        /*a {
-            &:hover {
-                text-decoration: underline;
-            }
-        }*/
-
         hr {
+            border: none;
             height: 1px;
             width: calc(100% - 10px);
-            background: var(--secondary-header);
-            margin: 18px auto;
+            background: linear-gradient(90deg, transparent, var(--tertiary-foreground), transparent);
+            margin: 24px auto;
             flex-grow: 0;
+            opacity: 0.3;
         }
 
         h1 {
             margin: 0;
-            line-height: 1rem;
-            font-size: 1.2rem;
-            font-weight: 600;
+            line-height: 1.2;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--foreground);
         }
 
         h3 {
-            font-size: 0.8125rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            color: var(--secondary-foreground);
-            /*margin-bottom: 10px;*/
+            color: var(--tertiary-foreground);
+            letter-spacing: 0.02em;
+            font-weight: 700;
 
             &:first-child {
                 margin-top: 0;
@@ -236,8 +271,9 @@
             margin-top: 0;
             font-size: 0.75rem;
             font-weight: 500;
+            color: var(--secondary-foreground);
 
-            > a:hover {
+            >a:hover {
                 text-decoration: underline;
             }
         }
@@ -245,6 +281,7 @@
         h6 {
             font-size: 1rem;
             font-weight: 600;
+            color: var(--foreground);
         }
 
         details {
@@ -252,17 +289,57 @@
                 font-size: 0.8125rem;
                 font-weight: 700;
                 text-transform: uppercase;
-                color: var(--secondary-foreground);
+                color: var(--tertiary-foreground);
                 cursor: pointer;
+                transition: color 150ms ease;
+
+                &:hover {
+                    color: var(--foreground);
+                }
             }
         }
 
+        /* Global button styling inside settings */
+        button,
+        [role="button"] {
+            transition: all 150ms ease;
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Global input/textarea/select styling inside settings */
+        input,
+        textarea,
+        select {
+            background: var(--primary-background);
+            border-radius: 4px;
+            color: var(--foreground);
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+
+            &:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 2px rgba(var(--accent-rgb, 88, 101, 242), 0.3);
+                outline: none;
+            }
+        }
+
+        /* Save success animation */
+        .saveSuccess {
+            animation: slideInRight 200ms ease;
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+
         .footer {
-            border-top: 1px solid;
+            border-top: 1px solid var(--tertiary-background);
             margin: 0;
-            padding-top: 5px;
+            padding-top: 8px;
             font-size: 0.875rem;
-            color: var(--secondary-foreground);
+            color: var(--tertiary-foreground);
         }
     }
 
@@ -281,6 +358,7 @@
             width: 40px;
             opacity: 0.5;
             font-size: 0.75rem;
+            color: var(--tertiary-foreground);
         }
 
         .closeButton {
@@ -290,17 +368,26 @@
             border-radius: var(--border-radius-half);
             height: 40px;
             width: 40px;
-            border: 3px solid var(--tertiary-background);
+            border: 2px solid var(--tertiary-background);
             cursor: pointer;
+            transition: all 150ms ease;
 
             svg {
                 color: var(--secondary-foreground);
+                transition: color 150ms ease;
             }
+
             &:hover {
-                background: var(--secondary-header);
+                background: var(--hover);
+                border-color: var(--tertiary-foreground);
+
+                svg {
+                    color: var(--foreground);
+                }
             }
+
             &:active {
-                transform: translateY(2px);
+                transform: scale(0.95) translateY(1px);
             }
         }
     }

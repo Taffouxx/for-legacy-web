@@ -11,8 +11,9 @@
     flex-direction: row;
 
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.1s ease-in-out background-color;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 150ms ease, color 150ms ease;
 
     color: var(--tertiary-foreground);
 
@@ -21,8 +22,8 @@
     }
 
     &.compact {
-        /* TOFIX: Introduce two separate compact items, one for settings, other for channels. */
         height: 32px;
+        position: relative;
     }
 
     &.user {
@@ -38,13 +39,13 @@
 
     &:hover {
         background: var(--hover);
+        color: var(--foreground);
     }
 
     div {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        transition: color 0.1s ease-in-out;
 
         &.content {
             gap: 10px;
@@ -110,6 +111,19 @@
     &[data-active="true"] {
         cursor: default;
         background: var(--hover);
+        color: var(--foreground);
+
+        /* Active left indicator */
+        &.compact::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--accent);
+        }
 
         .unread {
             display: none;
@@ -123,8 +137,6 @@
     &[data-alert="true"],
     &[data-active="true"],
     &:hover {
-        color: var(--foreground);
-
         .subText {
             color: var(--secondary-foreground) !important;
         }
@@ -163,10 +175,10 @@
         &.compact {
             height: 50px;
 
-            > div {
+            >div {
                 gap: 20px;
 
-                > svg {
+                >svg {
                     height: 24px;
                     width: 24px;
                 }

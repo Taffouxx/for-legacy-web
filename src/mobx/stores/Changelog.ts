@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, runInAction } from "mobx";
 
-import { changelogEntries, latestChangelog } from "../../assets/changelogs";
+import { changelogEntries } from "../../assets/changelogs";
 import { modalController } from "../../controllers/modals/ModalController";
 import Persistent from "../interfaces/Persistent";
 import Store from "../interfaces/Store";
@@ -15,7 +15,7 @@ export interface Data {
  */
 export default class Changelog implements Store, Persistent<Data>, Syncable {
     /**
-     * Last viewed changelog ID
+     * Last viewed changelog date timestamp
      */
     private viewed: number;
 
@@ -57,25 +57,26 @@ export default class Changelog implements Store, Persistent<Data>, Syncable {
      * Check whether there are new updates
      */
     checkForUpdates() {
-        if (this.viewed < latestChangelog) {
-            const expires = new Date(+changelogEntries[latestChangelog].date);
+        // Use the date timestamp as the version identifier
+        const latestEntry = changelogEntries[0];
+        if (!latestEntry) return;
+
+        const latestVersion = +latestEntry.date;
+
+        if (this.viewed < latestVersion) {
+            const expires = new Date(latestVersion);
             expires.setDate(expires.getDate() + 7);
 
+            // Only show if the update is less than a week old
             if (+new Date() < +expires) {
-                if (latestChangelog === 3) {
-                    modalController.push({
-                        type: "changelog_usernames",
-                    });
-                } else {
-                    modalController.push({
-                        type: "changelog",
-                        initial: latestChangelog,
-                    });
-                }
+                modalController.push({
+                    type: "changelog",
+                    initial: 1, // Open the first entry (index 0)
+                });
             }
 
             runInAction(() => {
-                this.viewed = latestChangelog;
+                this.viewed = latestVersion;
             });
         }
     }

@@ -24,6 +24,7 @@
 
         svg {
             flex-shrink: 0;
+            color: var(--tertiary-foreground);
         }
 
         a:hover {
@@ -48,7 +49,7 @@
         justify-content: space-between;
         font-size: 13px;
         text-transform: uppercase;
-        color: var(--secondary-foreground);
+        color: var(--tertiary-foreground);
         font-weight: 700;
 
         .reason {
@@ -64,16 +65,16 @@
     .ban,
     .member {
         gap: 8px;
-        padding: 10px;
+        padding: 10px 12px;
         display: flex;
         align-items: center;
         flex-direction: row;
         background: var(--secondary-background);
+        border-radius: var(--border-radius);
 
         span,
         code {
             flex: 1;
-
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -100,6 +101,7 @@
 
         .chevron {
             transition: 0.2s ease all;
+            color: var(--tertiary-foreground);
         }
 
         &:not([data-open="true"]) .chevron {
@@ -109,7 +111,9 @@
 
     .memberView {
         padding: 10px;
-        background: var(--background);
+        background: var(--primary-background);
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        margin-top: -4px;
     }
 
     .virtual {

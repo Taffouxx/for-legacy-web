@@ -274,7 +274,20 @@
                     "profile_picture": "Profile Picture",
                     "custom_background": "Custom Background",
                     "edit_background": "Edit Background",
-                    "edit_profile": "Edit Profile"
+                    "edit_profile": "Edit Profile",
+                    "main_profile": "User Profile",
+                    "server_profiles": "Server Profiles",
+                    "display_name": "Display Name",
+                    "display_name_tip": "Change your display name to whatever you like.",
+                    "markdown_tip": "Descriptions support Markdown formatting.",
+                    "username_tip": "Want to change your username?",
+                    "username_tip_link": "Head over to your account settings.",
+                    "back_to_list": "Back to Server List",
+                    "not_found": "Server or Member not found.",
+                    "nickname": "Nickname",
+                    "server_avatar": "Server Avatar",
+                    "select_server": "Select a Server",
+                    "server_profile_title": "{{name}} Profile"
                 },
                 "sessions": {
                     "title": "Sessions",

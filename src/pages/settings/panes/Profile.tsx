@@ -90,32 +90,28 @@ export const Profile = observer(() => {
                 <div
                     data-active={mode === "user"}
                     onClick={() => setMode("user")}>
-                    Основной профиль
+                    <Text id="app.settings.pages.profile.main_profile" />
                 </div>
                 <div
                     data-active={mode === "server"}
                     onClick={() => setMode("server")}>
-                    Личные профили сервера
+                    <Text id="app.settings.pages.profile.server_profiles" />
                 </div>
             </div>
 
             <div className={styles.profileGrid}>
                 <div className={styles.profileFields}>
                     {mode === "user" ? (
-                        <>
-                            <div className={styles.titleNew} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                Display Name
-                                <div className={styles.new}>NEW</div>
+                        <div key="user-profile">
+                            <div className={styles.section}>
+                                <h3><Text id="app.settings.pages.profile.display_name" /></h3>
+                                <InputBox
+                                    value={client.user!.username}
+                                    onChange={() => modalController.push({ type: "modify_displayname" })}
+                                    readOnly
+                                />
+                                <Tip>{translate("app.settings.pages.profile.display_name_tip")}</Tip>
                             </div>
-                            <CategoryButton
-                                onClick={() =>
-                                    modalController.push({ type: "modify_displayname" })
-                                }
-                                icon={<UserCircle size={24} />}
-                                action="chevron"
-                                description={"Change your display name to whatever you like"}>
-                                Display Name
-                            </CategoryButton>
 
                             <hr />
 
@@ -180,14 +176,14 @@ export const Profile = observer(() => {
 
                             <hr />
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div className={styles.section}>
                                 <h3>
                                     <Text id="app.settings.pages.profile.info" />
                                 </h3>
                                 <AutoComplete detached {...autoCompleteProps} />
                                 <TextAreaAutoSize
                                     maxRows={10}
-                                    minHeight={200}
+                                    minHeight={120}
                                     maxLength={2000}
                                     value={profile?.content ?? ""}
                                     disabled={typeof profile === "undefined"}
@@ -207,16 +203,9 @@ export const Profile = observer(() => {
                                     onBlur={onBlur}
                                 />
                                 <div className={styles.markdown}>
-                                    <Markdown size="24" />
+                                    <Markdown size="16" />
                                     <h5>
-                                        Descriptions support Markdown formatting,{" "}
-                                        <a
-                                            href="https://developers.revolt.chat/markdown"
-                                            target="_blank"
-                                            rel="noreferrer">
-                                            learn more here
-                                        </a>
-                                        .
+                                        {translate("app.settings.pages.profile.markdown_tip")}
                                     </h5>
                                 </div>
                             </div>
@@ -237,20 +226,24 @@ export const Profile = observer(() => {
 
                             <LineDivider />
                             <Tip>
-                                <span>
-                                    Want to change your username?{" "}
-                                    <a onClick={() => switchPage("account")}>
-                                        Head over to your account settings.
-                                    </a>
-                                </span>
+                                {
+                                    (
+                                        <span>
+                                            {translate("app.settings.pages.profile.username_tip")}{" "}
+                                            <a onClick={() => switchPage("account")}>
+                                                {translate("app.settings.pages.profile.username_tip_link")}
+                                            </a>
+                                        </span>
+                                    ) as any
+                                }
                             </Tip>
-                        </>
+                        </div>
                     ) : selectedServer ? (
                         <div className={styles.serverProfileEditor}>
                             <Button palette="secondary" onClick={() => setSelectedServer(undefined)}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <ChevronRight style={{ transform: 'rotate(180deg)', display: 'inline-block' }} size={18} />
-                                    Back to Server List
+                                    {translate("app.settings.pages.profile.back_to_list")}
                                 </div>
                             </Button>
 
@@ -259,17 +252,17 @@ export const Profile = observer(() => {
                             {(() => {
                                 const server = client.servers.get(selectedServer);
                                 const member = client.members.getKey({ server: selectedServer, user: client.user!._id });
-                                if (!server || !member) return <div>Server or Member not found.</div>;
+                                if (!server || !member) return <div>{translate("app.settings.pages.profile.not_found")}</div>;
 
                                 return (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                             <img src={server.generateIconURL({ max_side: 64 })} style={{ borderRadius: '50%', width: 32, height: 32 }} />
-                                            <h2 style={{ margin: 0 }}>{server.name} Profile</h2>
+                                            <h2 style={{ margin: 0 }}>{translate("app.settings.pages.profile.server_profile_title", { name: server.name })}</h2>
                                         </div>
 
-                                        <div>
-                                            <h3 style={{ fontSize: 12, textTransform: 'uppercase', opacity: 0.7, marginBottom: 12 }}>Nickname</h3>
+                                        <div className={styles.section}>
+                                            <h3><Text id="app.settings.pages.profile.nickname" /></h3>
                                             <div style={{ display: 'flex', gap: '8px' }}>
                                                 <div style={{ flex: 1 }}>
                                                     <InputBox
@@ -288,7 +281,7 @@ export const Profile = observer(() => {
                                                         member.edit({ nickname: serverNickname });
                                                         setServerNicknameChanged(false);
                                                     }}>
-                                                    Save
+                                                    {translate("app.special.modals.actions.save")}
                                                 </Button>
                                                 <Button
                                                     palette="secondary"
@@ -298,13 +291,13 @@ export const Profile = observer(() => {
                                                         setServerNickname("");
                                                         setServerNicknameChanged(false);
                                                     }}>
-                                                    Reset
+                                                    {translate("app.special.modals.actions.reset")}
                                                 </Button>
                                             </div>
                                         </div>
 
-                                        <div>
-                                            <h3 style={{ fontSize: 12, textTransform: 'uppercase', opacity: 0.7, marginBottom: 12 }}>Server Avatar</h3>
+                                        <div className={styles.section}>
+                                            <h3><Text id="app.settings.pages.profile.server_avatar" /></h3>
                                             <FileUploader
                                                 width={92}
                                                 height={92}
@@ -324,8 +317,8 @@ export const Profile = observer(() => {
                         </div>
                     ) : (
                         <div className={styles.serverProfiles}>
-                            <h3 style={{ fontSize: 12, textTransform: 'uppercase', opacity: 0.7, marginBottom: 16 }}>Select a Server</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <h3><Text id="app.settings.pages.profile.select_server" /></h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
                                 {(state as any).ordering.orderedServers.map((sid: any) => {
                                     const id = typeof sid === 'string' ? sid : sid._id;
                                     const server = client.servers.get(id);
@@ -334,9 +327,9 @@ export const Profile = observer(() => {
                                         <CategoryButton
                                             key={id}
                                             onClick={() => setSelectedServer(id)}
-                                            icon={<img src={server.generateIconURL({ max_side: 32 })} style={{ borderRadius: '50%', width: 24, height: 24 }} />}
+                                            icon={(<img src={server.generateIconURL({ max_side: 32 })} style={{ borderRadius: '50%', width: 24, height: 24, objectFit: 'cover' }} />) as any}
                                             action="chevron">
-                                            {server.name}
+                                            <div style={{ fontWeight: 600 }}>{server.name}</div>
                                         </CategoryButton>
                                     );
                                 })}

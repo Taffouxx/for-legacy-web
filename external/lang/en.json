@@ -880,7 +880,11 @@
                         "supporter": "Supporter",
                         "moderation": "Platform Moderation",
                         "responsible_disclosure": "Responsibly Disclosed Security Issues",
-                        "early_adopter": "Early Adopter"
+                        "early_adopter": "Early Adopter",
+                        "designer": "Designer",
+                        "partner1": "Tier 1 Partner",
+                        "partner2": "Tier 2 Partner",
+                        "partner3": "Tier 3 Partner"
                     }
                 },
                 "user_picker": {
@@ -1214,18 +1218,6 @@
         },
         "CapsLock": {
             "full": "Caps Lock"
-        }
-    },
-    "special": {
-        "popovers": {
-            "user_profile": {
-                "badges": {
-                    "designer": "Designer",
-                    "partner1": "Tier 1 Partner",
-                    "partner2": "Tier 2 Partner",
-                    "partner3": "Tier 3 Partner"
-                }
-            }
         }
     }
 }

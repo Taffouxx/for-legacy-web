@@ -1055,6 +1055,10 @@
         "ctrlc": "Ctrl + C"
     },
     "permissions": {
+        "Administrator": {
+            "t": "Administrator",
+            "d": "Grants all server management permissions. Members with this permission can manage channels, roles, permissions, and members."
+        },
         "ManageChannels": {
             "t": "Manage Channels",
             "d": "Allows members to create, edit and delete channels."
@@ -1210,6 +1214,18 @@
         },
         "CapsLock": {
             "full": "Caps Lock"
+        }
+    },
+    "special": {
+        "popovers": {
+            "user_profile": {
+                "badges": {
+                    "designer": "Designer",
+                    "partner1": "Tier 1 Partner",
+                    "partner2": "Tier 2 Partner",
+                    "partner3": "Tier 3 Partner"
+                }
+            }
         }
     }
 }

@@ -551,6 +551,7 @@ export default function ContextMenus() {
                         elements.push(
                             <MenuItem data={action} disabled={disabled}>
                                 <div
+                                    title={disabled ? "Пока эта функция недоступна" : undefined}
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
@@ -558,6 +559,7 @@ export default function ContextMenus() {
                                         width: "100%",
                                         gap: "12px",
                                         color,
+                                        opacity: disabled ? 0.4 : 1,
                                     }}>
                                     <span>
                                         <Text id={`app.context_menu.${locale}`} />
@@ -585,6 +587,8 @@ export default function ContextMenus() {
                                 },
                                 "hide_muted_channels",
                                 <CheckSquare size={18} />,
+                                undefined,
+                                true,
                             );
 
                             pushDivider();
@@ -639,6 +643,8 @@ export default function ContextMenus() {
                                 { action: "open_app_directory", serverId: server_list },
                                 "app_directory",
                                 <Grid size={18} />,
+                                undefined,
+                                true,
                             );
 
                             pushDivider();
@@ -650,12 +656,16 @@ export default function ContextMenus() {
                                 },
                                 "open_notification_options",
                                 <Bell size={18} />,
+                                undefined,
+                                true,
                             );
 
                             generateItem(
                                 { action: "open_server_privacy", serverId: server_list },
                                 "server_privacy",
                                 <Shield size={18} />,
+                                undefined,
+                                true,
                             );
 
                             pushDivider();
@@ -675,6 +685,8 @@ export default function ContextMenus() {
                                 { action: "open_server_isolation", serverId: server_list },
                                 "server_isolation",
                                 <Lock size={18} />,
+                                undefined,
+                                true,
                             );
 
                             generateItem(
@@ -684,6 +696,8 @@ export default function ContextMenus() {
                                 },
                                 "show_all_channels",
                                 <CheckSquare size={18} />,
+                                undefined,
+                                true,
                             );
 
                             generateItem(
@@ -691,6 +705,7 @@ export default function ContextMenus() {
                                 "report_raid",
                                 <Shield size={18} color="var(--error)" />,
                                 "var(--error)",
+                                true,
                             );
 
                             generateItem(

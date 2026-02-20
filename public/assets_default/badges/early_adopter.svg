@@ -1,1 +1,9 @@
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="64.00001046823172" xmlns="http://www.w3.org/2000/svg" id="screenshot" version="1.1" viewBox="-0.000008942940667111543 -0.0000033745862566547657 64.00001046823172 64.00000545874563" height="64.00000545874563" style="-webkit-print-color-adjust: exact;"><g id="shape-d9b11490-3403-11ec-bc16-7b519797d558"><rect rx="0" ry="0" x="0" y="0" transform="matrix(1.0000000000000007,-8.726646259971662e-8,-1.5707963280665485e-7,1.0000000000000124,0.000005026548230091521,0.0000027925264056705146)" width="64" height="64" style="fill: rgb(255, 255, 255); fill-opacity: 1;"/></g></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z" fill="url(#paint0_linear_254_99)"/>
+<defs>
+<linearGradient id="paint0_linear_254_99" x1="12" y1="3" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+<stop stop-color="#78C74E"/>
+<stop offset="1" stop-color="#8FD968"/>
+</linearGradient>
+</defs>
+</svg>

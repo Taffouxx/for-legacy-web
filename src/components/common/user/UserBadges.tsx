@@ -15,8 +15,11 @@ enum Badges {
     ActiveSupporter = 64,
     Paw = 128,
     EarlyAdopter = 256,
-    ReservedRelevantJokeBadge1 = 512,
-    ReservedRelevantJokeBadge2 = 1024,
+    Partner1 = 512,
+    Partner2 = 1024,
+    Partner3 = 2048,
+    Designer = 4096,
+
 }
 
 const BadgesBase = styled.div`
@@ -128,20 +131,7 @@ export default function UserBadges({ badges, uid }: Props) {
                 ) : (
                     <></>
                 )}
-                {badges & Badges.ReservedRelevantJokeBadge1 ? (
-                    <Tooltip content="sus">
-                        <img src="/assets/badges/amog.svg" />
-                    </Tooltip>
-                ) : (
-                    <></>
-                )}
-                {badges & Badges.ReservedRelevantJokeBadge2 ? (
-                    <Tooltip content="It's Morbin Time">
-                        <img src="/assets/badges/amorbus.svg" />
-                    </Tooltip>
-                ) : (
-                    <></>
-                )}
+
                 {badges & Badges.Paw ? (
                     <Tooltip content="🦊">
                         <img src="/assets/badges/paw.svg" />
@@ -152,6 +142,34 @@ export default function UserBadges({ badges, uid }: Props) {
                 {uid === "01EX2NCWQ0CHS3QJF0FEQS1GR4" ? (
                     <Tooltip content="🦝">
                         <img src="/assets/badges/raccoon.svg" />
+                    </Tooltip>
+                ) : (
+                    <></>
+                )}
+                {badges & Badges.Designer ? (
+                    <Tooltip content={<Text id="app.special.popovers.user_profile.badges.designer" />}>
+                        <img src="/assets/badges/designer.svg" />
+                    </Tooltip>
+                ) : (
+                    <></>
+                )}
+                {badges & Badges.Partner1 ? (
+                    <Tooltip content={<Text id="app.special.popovers.user_profile.badges.partner1" />}>
+                        <img src="/assets/badges/partner1.svg" />
+                    </Tooltip>
+                ) : (
+                    <></>
+                )}
+                {badges & Badges.Partner2 ? (
+                    <Tooltip content={<Text id="app.special.popovers.user_profile.badges.partner2" />}>
+                        <img src="/assets/badges/partner2.svg" />
+                    </Tooltip>
+                ) : (
+                    <></>
+                )}
+                {badges & Badges.Partner3 ? (
+                    <Tooltip content={<Text id="app.special.popovers.user_profile.badges.partner3" />}>
+                        <img src="/assets/badges/partner3.svg" />
                     </Tooltip>
                 ) : (
                     <></>

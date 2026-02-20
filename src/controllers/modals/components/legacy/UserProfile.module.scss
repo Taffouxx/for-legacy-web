@@ -173,53 +173,60 @@
         .menuWrapper {
             position: relative;
             flex-shrink: 0;
-        }
 
-        .iconButton {
-            width: 46px;
-            /* Slightly larger as requested */
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.07);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
-        }
-
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 8px;
-            background: #181818;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 6px;
-            z-index: 100;
-            width: 220px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-
-            div {
-                padding: 10px 12px;
-                font-size: 13px;
-                font-weight: 600;
-                color: var(--foreground);
-                border-radius: 8px;
+            .iconButton {
+                width: 46px;
+                /* Slightly larger as requested */
+                height: 46px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.07);
+                border-radius: 12px;
                 cursor: pointer;
-                transition: background 0.2s;
+                transition: all 0.2s;
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgba(255, 255, 255, 0.1);
                 }
+            }
 
-                &:not(:last-child) {
-                    margin-bottom: 2px;
+            .dropdown {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                margin-top: 8px;
+                background: #181818;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 6px;
+                z-index: 100;
+                width: 220px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+                div {
+                    padding: 10px 12px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: var(--foreground);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background 0.2s;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.05);
+                    }
+
+                    &:not(:last-child) {
+                        margin-bottom: 2px;
+                    }
+                }
+            }
+
+            &:not(:first-child) {
+                .dropdown {
+                    left: auto;
+                    right: 0;
                 }
             }
         }

@@ -36,7 +36,7 @@ COPY . .
 RUN echo "Building with VITE_API_URL=$VITE_API_URL"
 
 # Собираем проект
-RUN yarn build
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
 # === Stage 2: Production ===
 FROM caddy:2-alpine

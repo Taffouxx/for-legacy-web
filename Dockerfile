@@ -36,7 +36,7 @@ COPY . .
 RUN echo "Building with VITE_API_URL=$VITE_API_URL"
 
 # Собираем проект
-RUN NODE_OPTIONS="--max-old-space-size=6144" npx vite build
+RUN NODE_OPTIONS="--max-old-space-size=6144" yarn build
 
 # === Stage 2: Production ===
 FROM caddy:2-alpine

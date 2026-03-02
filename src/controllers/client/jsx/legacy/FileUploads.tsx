@@ -73,6 +73,7 @@ export async function uploadFile(
             ? client.session
             : client?.session?.token;
 
+    console.log("Axios request details:", `${autumnURL}/${tag}`, formData, sesToken ? "Token present" : "No token");
     const res = await Axios.post(`${autumnURL}/${tag}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -80,6 +81,7 @@ export async function uploadFile(
         },
         ...config,
     });
+    console.log("Axios response data:", res.data);
 
     return res.data.id;
 }
@@ -146,33 +148,71 @@ export function FileUploader(props: Props) {
         grabFiles(
             maxFileSize,
             async (files) => {
-                setUploading(true);
-
-                try {
-                    if (props.behaviour === "multi") {
-                        props.onChange(files);
-                    } else if (props.behaviour === "ask") {
-                        props.onChange(files[0]);
-                    } else {
-                        await props.onUpload(
-                            await uploadFile(
+                const processUpload = async (fileToUpload: File) => {
+                    console.log("Starting processUpload for:", fileToUpload.name, fileToUpload.type, fileToUpload.size);
+                    setUploading(true);
+                    try {
+                        if (props.behaviour === "multi") {
+                            props.onChange([fileToUpload]);
+                        } else if (props.behaviour === "ask") {
+                            props.onChange(fileToUpload);
+                        } else {
+                            const id = await uploadFile(
                                 client.configuration!.features.autumn.url,
                                 fileType,
-                                files[0],
-                            ),
-                        );
+                                fileToUpload,
+                            );
+                            console.log("File uploaded successfully, id:", id);
+                            await props.onUpload(id);
+                            console.log("onUpload completed");
 
-                        if (props.previewAfterUpload) {
-                            setPreviewFile(files[0]);
+                            if (props.previewAfterUpload) {
+                                setPreviewFile(fileToUpload);
+                            }
                         }
+                    } catch (err) {
+                        console.error("Upload failed:", err);
+                        return modalController.push({
+                            type: "error",
+                            error: takeError(err),
+                        });
+                    } finally {
+                        setUploading(false);
                     }
-                } catch (err) {
-                    return modalController.push({
-                        type: "error",
-                        error: takeError(err),
+                };
+
+                const croppable = ["avatars", "backgrounds", "banners", "icons"].includes(fileType);
+                
+                if (croppable && props.behaviour !== "multi") {
+                    let aspectRatio = 1;
+                    if (fileType === "backgrounds" || fileType === "banners") {
+                        aspectRatio = 16 / 9; // Common wide aspect ratio
+                    }
+                    
+                    const title = (fileType === "avatars" || fileType === "icons") ? "app.special.modals.image_cropper.title_avatar" : "app.special.modals.image_cropper.title_banner";
+
+                    modalController.push({
+                        type: "image_cropper",
+                        file: files[0],
+                        aspectRatio,
+                        title,
+                        onCallback: (croppedFile) => {
+                            console.log("Image Cropper callback received file:", croppedFile.name, croppedFile.size);
+                            processUpload(croppedFile);
+                        }
                     });
-                } finally {
-                    setUploading(false);
+                } else {
+                    if (props.behaviour === "multi") {
+                        setUploading(true);
+                        try {
+                            props.onChange(files);
+                        } finally {
+                            setUploading(false);
+                        }
+                    } else {
+                        console.log("Starting direct upload (non-croppable or multi)");
+                        processUpload(files[0]);
+                    }
                 }
             },
             () =>

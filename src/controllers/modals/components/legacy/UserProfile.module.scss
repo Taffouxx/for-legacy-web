@@ -368,6 +368,19 @@
                 border-bottom-color: var(--foreground);
             }
         }
+
+        .goldTab {
+            &[data-active="true"] {
+                color: #f0d060;
+                border-bottom-color: #f0d060;
+                text-shadow: 0 0 12px rgba(240, 208, 96, 0.35);
+            }
+
+            &:hover {
+                color: #f0d060 !important;
+                opacity: 0.85;
+            }
+        }
     }
 
     .content {

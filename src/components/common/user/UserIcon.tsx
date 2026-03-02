@@ -1,6 +1,7 @@
 import { VolumeMute, MicrophoneOff } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
 import { useParams } from "react-router-dom";
+// @ts-ignore - revolt.js module resolution issue
 import { User, API } from "revolt.js";
 import styled, { css } from "styled-components/macro";
 

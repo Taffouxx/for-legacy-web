@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Link } from "react-router-dom";
-import { Channel, User } from "revolt.js";
-import { Emoji as CustomEmoji } from "revolt.js/esm/maps/Emojis";
 import styled, { css } from "styled-components/macro";
 
 import { StateUpdater, useState } from "preact/hooks";
@@ -13,6 +11,18 @@ import Emoji from "./Emoji";
 import ServerIcon from "./ServerIcon";
 import Tooltip from "./Tooltip";
 import UserIcon from "./user/UserIcon";
+
+// @ts-ignore - revolt.js types
+type User = any;
+// @ts-ignore - revolt.js types
+type Channel = any;
+// @ts-ignore - revolt.js types
+interface CustomEmoji {
+    _id: string;
+    name: string;
+    imageURL: string;
+    parent: { type: string; id: string };
+}
 
 export type AutoCompleteState =
     | { type: "none" }
@@ -109,14 +119,13 @@ export function useAutoComplete(
 
             if (type === "emoji") {
                 // ! TODO: we should convert it to a Binary Search Tree and use that
-                const matches = [
-                    ...Object.keys(emojiDictionary).filter((emoji: string) =>
-                        emoji.match(regex),
-                    ),
-                    ...Array.from(client.emojis.values()).filter((emoji) =>
-                        emoji.name.match(regex),
-                    ),
-                ].splice(0, 5);
+                const emojiMatches: string[] = Object.keys(emojiDictionary).filter((emoji: string) =>
+                    emoji.match(regex),
+                );
+                const customEmojiMatches: CustomEmoji[] = (Array.from(client.emojis.values()) as CustomEmoji[]).filter((emoji: CustomEmoji) =>
+                    emoji.name.match(regex),
+                );
+                const matches: (string | CustomEmoji)[] = [...emojiMatches, ...customEmojiMatches].splice(0, 5);
 
                 if (matches.length > 0) {
                     const currentPosition =
@@ -136,7 +145,7 @@ export function useAutoComplete(
             }
 
             if (type === "user" && searchClues?.users) {
-                let users: User[] = [];
+            let users: User[] = [];
                 switch (searchClues.users.type) {
                     case "all":
                         users = [...client.users.values()];
@@ -149,18 +158,23 @@ export function useAutoComplete(
                             case "Group":
                             case "DirectMessage":
                                 users = channel.recipients!.filter(
-                                    (x) => typeof x !== "undefined",
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    (x: any) => typeof x !== "undefined",
                                 ) as User[];
                                 break;
                             case "TextChannel":
                                 {
                                     const server = channel.server_id;
                                     users = [...client.members.keys()]
-                                        .map((x) => JSON.parse(x))
-                                        .filter((x) => x.server === server)
-                                        .map((x) => client.users.get(x.user))
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        .map((x: any) => JSON.parse(x))
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        .filter((x: any) => x.server === server)
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        .map((x: any) => client.users.get(x.user))
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         .filter(
-                                            (x) => typeof x !== "undefined",
+                                            (x: any) => typeof x !== "undefined",
                                         ) as User[];
                                 }
                                 break;
@@ -171,7 +185,8 @@ export function useAutoComplete(
                 }
 
                 users = users.filter(
-                    (x) => x._id !== "00000000000000000000000000",
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (x: any) => x._id !== "00000000000000000000000000",
                 );
 
                 const matches = (
@@ -203,7 +218,8 @@ export function useAutoComplete(
                 const channels = client.servers
                     .get(searchClues.channels.server)
                     ?.channels.filter(
-                        (x) => typeof x !== "undefined",
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        (x: any) => typeof x !== "undefined",
                     ) as Channel[];
 
                 const matches = (
@@ -249,9 +265,7 @@ export function useAutoComplete(
                     content.splice(
                         index,
                         search.length,
-                        selected instanceof CustomEmoji
-                            ? selected._id
-                            : selected,
+                        (selected as any)._id ? (selected as any)._id : (selected as string),
                         ": ",
                     );
                 } else if (state.type === "user") {
@@ -438,10 +452,10 @@ export default function AutoComplete({
                                     flexDirection: "row",
                                     justifyContent: "center",
                                 }}>
-                                {match instanceof CustomEmoji ? (
+                                {match && (match as CustomEmoji).imageURL ? (
                                     <img
                                         loading="lazy"
-                                        src={match.imageURL}
+                                        src={(match as CustomEmoji).imageURL}
                                         style={{
                                             width: `20px`,
                                             height: `20px`,
@@ -450,36 +464,28 @@ export default function AutoComplete({
                                 ) : (
                                     <Emoji
                                         emoji={
-                                            (
-                                                emojiDictionary as Record<
-                                                    string,
-                                                    string
-                                                >
-                                            )[match]
+                                            (emojiDictionary as Record<string, string>)[match as string]
                                         }
                                         size={20}
                                     />
                                 )}
-                                <span style={{ paddingLeft: "4px" }}>{`:${
-                                    match instanceof CustomEmoji
-                                        ? match.name
-                                        : match
-                                }:`}</span>
+                                <span style={{ paddingLeft: "4px" }}>{`:${(match as any).name ? (match as any).name : match}:`}</span>
                             </div>
-                            {match instanceof CustomEmoji &&
-                                match.parent.type == "Server" && (
+                            {(match as any).parent &&
+                                (match as any).parent.type == "Server" && (
                                     <>
+                                        {/* @ts-ignore Tooltip children prop */}
                                         <Tooltip
                                             content={
                                                 client.servers.get(
-                                                    match.parent.id,
+                                                    (match as CustomEmoji).parent.id,
                                                 )?.name
                                             }>
                                             <Link
-                                                to={`/server/${match.parent.id}`}>
+                                                to={`/server/${(match as CustomEmoji).parent.id}`}>
                                                 <ServerIcon
                                                     target={client.servers.get(
-                                                        match.parent.id,
+                                                        (match as CustomEmoji).parent.id,
                                                     )}
                                                     size={20}
                                                 />

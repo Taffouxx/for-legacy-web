@@ -1,5 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function takeError(error: any): string {
+    if (error?.message?.includes("Unexpected token '<'")) {
+        return error.message;
+    }
+
     if (error.response) {
         const type = error.response.data?.type;
         if (type) {

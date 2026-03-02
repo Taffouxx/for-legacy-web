@@ -369,27 +369,31 @@ function ListElement({
                     <KanbanList last={false} key={category.id}>
                         <div className="inner">
                             <Row>
-                                <KanbanListHeader 
-                                    {...provided.dragHandleProps}
-                                    onClick={startEditing}>
-                                    {editing !== undefined ? (
-                                        <input
-                                            value={editing}
-                                            onChange={(e) =>
-                                                setEditing(
-                                                    e.currentTarget.value,
-                                                )
-                                            }
-                                            onKeyDown={(e) =>
-                                                e.key === "Enter" && save()
-                                            }
-                                            id={category.id}
-                                        />
-                                    ) : (
-                                        <span>
-                                            {category.title}
-                                        </span>
-                                    )}
+                                <KanbanListHeader>
+                                    <div 
+                                        {...provided.dragHandleProps}
+                                        style={{ cursor: draggable ? 'grab' : 'default', display: 'flex', alignItems: 'center', flex: 1 }}
+                                        onClick={draggable ? undefined : startEditing}
+                                    >
+                                        {editing !== undefined ? (
+                                            <input
+                                                value={editing}
+                                                onChange={(e) =>
+                                                    setEditing(
+                                                        e.currentTarget.value,
+                                                    )
+                                                }
+                                                onKeyDown={(e) =>
+                                                    e.key === "Enter" && save()
+                                                }
+                                                id={category.id}
+                                            />
+                                        ) : (
+                                            <span>
+                                                {category.title}
+                                            </span>
+                                        )}
+                                    </div>
                                 </KanbanListHeader>
                                 {deleteSelf && (
                                     <KanbanListHeader onClick={deleteSelf}>
@@ -417,20 +421,24 @@ function ListElement({
                                                     {(provided) => (
                                                         <div
                                                             {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
                                                             ref={
                                                                 provided.innerRef
                                                             }>
                                                             <KanbanEntry>
                                                                 <div className="inner">
-                                                                    <ChannelIcon
-                                                                        target={
-                                                                            channel
-                                                                        }
-                                                                        size={
-                                                                            24
-                                                                        }
-                                                                    />
+                                                                    <div 
+                                                                        {...provided.dragHandleProps}
+                                                                        style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}
+                                                                    >
+                                                                        <ChannelIcon
+                                                                            target={
+                                                                                channel
+                                                                            }
+                                                                            size={
+                                                                                24
+                                                                            }
+                                                                        />
+                                                                    </div>
                                                                     <span>
                                                                         {
                                                                             channel.name

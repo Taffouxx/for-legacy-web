@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components/macro";
 import { Text } from "preact-i18n";
 import { Shield, Check, InfoCircle, Group, Chat, Star, Calendar, Cog, User } from "@styled-icons/boxicons-regular";
 import { Button } from "@revoltchat/ui";
-import { Server } from "revolt.js";
+type Server = any;
 
 interface Props {
     server: Server;

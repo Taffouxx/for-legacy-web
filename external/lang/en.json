@@ -665,7 +665,14 @@
                 "hoist_role": "Hoist Role",
                 "hoist_desc": "Display this role above others.",
                 "title": "Permissions for {{role}}",
-                "edit_title": "Edit Permissions"
+                "edit_title": "Edit Permissions",
+                "roles_title": "ROLES",
+                "roles_members": "MEMBERS",
+                "roles_empty_title": "Organize your members",
+                "roles_empty_description": "Use roles to group your server members and assign permissions.",
+                "default_role_desc": "@everyone • applies to all server members",
+                "role_color_info": "Members use the color of their highest role.",
+                "search_role": "Search roles"
             }
         },
         "special": {
@@ -707,6 +714,10 @@
                 "onboarding": {
                     "welcome": "Welcome to",
                     "pick": "Pick a username that you want people to be able to find you by. This can be changed later in your user settings."
+                },
+                "image_cropper": {
+                    "title_avatar": "Crop Avatar",
+                    "title_banner": "Crop Banner"
                 },
                 "prompt": {
                     "confirm_leave": "Leave {{name}}?",
@@ -769,6 +780,15 @@
                             "design_hierarchy": "• Better visual hierarchy and spacing",
                             "design_accessibility": "• Enhanced navigation experience",
                             "outro": "We hope you enjoy the new Zeelo experience! Feel free to share your feedback."
+                        },
+                        "hall_of_fame_update": {
+                            "title": "Hall of Fame & SDK Fixes 🏆",
+                            "hof_intro": "In this update, we focus on honoring your achievements and making the client more robust.",
+                            "hof_feature_trophies": "• **Hall of Fame**: A new premium profile tab to showcase your achievements with a stunning gold-themed design.",
+                            "hof_feature_sdk_fix": "• **SDK Stabilization**: Fixed critical data mapping in the Revolt SDK to ensure trophies and other fields are correctly loaded.",
+                            "hof_feature_i18n": "• **Full Localization**: The Hall of Fame feature is now fully available in both English and Russian.",
+                            "hof_feature_suppression": "• **Error Handing**: Suppressed disruptive non-critical syntax error popups for a smoother experience.",
+                            "hof_outro": "Go check out your trophies in your profile today!"
                         }
                     }
                 },
@@ -866,8 +886,14 @@
                     "widgets_soon": "Your widgets will appear here soon!",
                     "tabs": {
                         "dashboard": "Dashboard",
+                        "hall_of_fame": "Hall of Fame",
                         "activity": "Activity",
                         "wishlist": "Wishlist"
+                    },
+                    "trophies": {
+                        "empty_title": "No Trophies Yet",
+                        "empty_desc": "This warrior hasn't claimed any trophies in battle yet...",
+                        "earned_on": "Earned"
                     },
                     "sub": {
                         "badges": "Badges",

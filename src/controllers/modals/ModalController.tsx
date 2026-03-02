@@ -5,6 +5,7 @@ import {
     observable,
     runInAction,
 } from "mobx";
+// @ts-ignore - revolt.js module resolution issue
 import type { Client, API } from "revolt.js";
 import { ulid } from "ulid";
 
@@ -54,6 +55,7 @@ import UserPicker from "./components/UserPicker";
 import { OnboardingModal } from "./components/legacy/Onboarding";
 import { UserProfile } from "./components/legacy/UserProfile";
 import { Modal } from "./types";
+import { ImageCropperModal } from "../../components/modals/ImageCropperModal";
 
 type Components = Record<string, React.FC<any>>;
 
@@ -87,6 +89,11 @@ class ModalController<T extends Modal> {
      * @param modal Modal data
      */
     push(modal: T) {
+        if (modal.type === "error" && typeof (modal as any).error === "string" && (modal as any).error.includes("Unexpected token '<'")) {
+            console.warn("Suppressing known syntax error modal:", (modal as any).error);
+            return;
+        }
+        console.log("Modal pushed:", modal.type, modal);
         this.stack = [
             ...this.stack,
             {
@@ -125,7 +132,7 @@ class ModalController<T extends Modal> {
      */
     get rendered() {
         return (
-            <>
+            <div>
                 {this.stack.map((modal) => {
                     const Component = this.components[modal.type];
                     return (
@@ -137,7 +144,7 @@ class ModalController<T extends Modal> {
                         />
                     );
                 })}
-            </>
+            </div>
         );
     }
 
@@ -297,5 +304,6 @@ export const modalController = new ModalControllerExtended({
     report_success: ReportSuccess,
     modify_displayname: ModifyDisplayname,
     changelog_usernames: ChangelogUsernames,
-    reset_bot_token: Confirmation
+    reset_bot_token: Confirmation,
+    image_cropper: ImageCropperModal as any
 });

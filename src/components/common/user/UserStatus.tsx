@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+// @ts-ignore - revolt.js module resolution issue
 import { User, API } from "revolt.js";
 
 import { Text } from "preact-i18n";
@@ -21,7 +22,7 @@ export default observer(({ user, tooltip }: Props) => {
                 );
             }
 
-            return <>{user.status.text}</>;
+            return <span>{user.status.text}</span>;
         }
 
         if (user.status?.presence === "Busy") {

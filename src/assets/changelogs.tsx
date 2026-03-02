@@ -13,6 +13,18 @@ export interface ChangelogPost {
  */
 export const changelogEntries: ChangelogPost[] = [
     {
+        date: new Date("2026-03-02T16:00:00.000Z"),
+        title: "hall_of_fame_update",
+        content: [
+            "hof_intro",
+            "hof_feature_trophies",
+            "hof_feature_sdk_fix",
+            "hof_feature_i18n",
+            "hof_feature_suppression",
+            "hof_outro",
+        ],
+    },
+    {
         date: new Date("2025-02-15T18:00:00.000Z"),
         title: "welcome",
         content: [

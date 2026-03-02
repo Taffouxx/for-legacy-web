@@ -44,12 +44,17 @@
         }
     },
     "dependencies": {
+        "@insertish/exponential-backoff": "^3.1.0-patch.2",
+        "@insertish/isomorphic-ws": "^4.0.1",
         "@revoltchat/rehype-katex": "6.0.3-patch.1",
+        "axios": "^1.13.6",
         "fs-extra": "^10.0.0",
         "klaw": "^3.0.0",
         "lottie-react": "^2.4.0",
+        "revolt-api": "^0.8.9",
         "sirv-cli": "^1.0.14",
-        "vite": "^3.0.5"
+        "vite": "^3.0.5",
+        "vite-plugin-node-polyfills": "^0.25.0"
     },
     "devDependencies": {
         "@babel/plugin-proposal-decorators": "^7.17.9",

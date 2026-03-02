@@ -10,6 +10,11 @@
         "forceConsistentCasingInFileNames": true,
         "module": "ESNext",
         "moduleResolution": "Node",
+        "baseUrl": ".",
+        "paths": {
+            "revolt.js": ["./external/revolt.js/lib/index.js"],
+            "revolt.js/esm/maps/Emojis": ["./external/revolt.js/esm/maps/Emojis.js"]
+        },
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
@@ -20,5 +25,5 @@
         "types": ["vite-plugin-pwa/client"],
         "experimentalDecorators": true
     },
-    "include": ["src", "external/lang/Languages.ts"]
+    "include": ["src", "external/lang/Languages.ts", "external/revolt.js/lib/**/*", "external/revolt.js/esm/**/*"]
 }

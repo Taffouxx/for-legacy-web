@@ -14,16 +14,17 @@ interface Props {
     background?: boolean;
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $hasBanner: boolean }>`
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     position: relative;
     user-select: none;
+    height: ${props => props.$hasBanner ? '120px' : 'var(--header-height)'};
 `;
 
 const BannerBackground = styled.div<{ $url?: string }>`
-    height: 120px;
+    height: 100%;
     background-size: cover;
     background-position: center;
     background-image: ${props => props.$url ? `url('${props.$url}')` : "none"};
@@ -117,10 +118,6 @@ const ActionButton = styled.div`
     }
 `;
 
-const PlaceholderSpacer = styled.div<{ $hasBanner: boolean }>`
-    height: ${props => props.$hasBanner ? "120px" : "var(--header-height)"};
-    flex-shrink: 0;
-`;
 
 export default observer(({ server }: Props) => {
     const bannerURL = server.generateBannerURL({ width: 480 });
@@ -147,7 +144,7 @@ export default observer(({ server }: Props) => {
     };
 
     return (
-        <Wrapper>
+        <Wrapper $hasBanner={hasBanner}>
             <BannerBackground $url={bannerURL} />
             <HeaderContainer
                 $hasBanner={hasBanner}
@@ -211,7 +208,6 @@ export default observer(({ server }: Props) => {
                     </ActionButton>
                 </Tooltip>
             </HeaderContainer>
-            <PlaceholderSpacer $hasBanner={hasBanner} />
         </Wrapper>
     );
 });

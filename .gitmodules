@@ -3,4 +3,4 @@
 	url = https://github.com/revoltchat/components
 [submodule "external/revolt.js"]
 	path = external/revolt.js
-	url = https://github.com/revoltchat/revolt.js
+	url = https://github.com/Taffouxx/javascript-client-sdk.git

@@ -5,6 +5,7 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 import preact from "@preact/preset-vite";
 
@@ -49,6 +50,7 @@ export default defineConfig({
         legacy({
             targets: ["defaults", "not IE 11"],
         }),
+        nodePolyfills(),
         VitePWA({
             srcDir: "src",
             filename: "sw.ts",
@@ -122,10 +124,30 @@ export default defineConfig({
             },
         },
     },
-    optimizeDeps: {
-        exclude: ["revolt.js", "preact-context-menu", "@revoltchat/ui"],
+optimizeDeps: {
+        // Заставляем Vite конвертировать эти старые пакеты в современный формат
+        include: [
+            "axios",
+            "form-data",
+            "follow-redirects",
+            "revolt-api",
+            "@insertish/exponential-backoff"
+        ],
+        // Исключаем только чисто фронтендовые вещи
+        exclude: [
+            "revolt.js", 
+            "preact-context-menu", 
+            "@revoltchat/ui"
+        ],
+        esbuildOptions: {
+            target: "esnext",
+        },
     },
-    resolve: {
+   resolve: {
         preserveSymlinks: true,
+        alias: {
+            "revolt.js": resolve(__dirname, "external/revolt.js/esm/index.js"),
+            "revolt.js/esm/maps/Emojis": resolve(__dirname, "external/revolt.js/esm/maps/Emojis.js"),
+        },
     },
 });

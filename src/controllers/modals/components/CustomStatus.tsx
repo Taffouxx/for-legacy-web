@@ -16,7 +16,7 @@ export default function CustomStatus({
     return (
         <ModalForm
             {...props}
-            title={<Text id="app.context_menu.set_custom_status" />}
+            title={<Text id="app.context_menu.set_custom_status" /> as any}
             schema={{
                 text: "text",
             }}
@@ -27,7 +27,7 @@ export default function CustomStatus({
                 text: {
                     field: (
                         <Text id="app.context_menu.custom_status" />
-                    ) as React.ReactChild,
+                    ) as any,
                 },
             }}
             callback={({ text }) =>
@@ -39,7 +39,7 @@ export default function CustomStatus({
                 })
             }
             submit={{
-                children: <Text id="app.special.modals.actions.save" />,
+                children: <Text id="app.special.modals.actions.save" /> as any,
             }}
         />
     );

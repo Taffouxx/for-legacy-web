@@ -198,6 +198,13 @@ export type Modal = {
       target: { name: string, id: string },
       callback: () => Promise<void>;
     }
+    | {
+      type: "image_cropper";
+      file: File;
+      aspectRatio?: number;
+      title?: string;
+      onCallback: (file: File) => void;
+    }
   );
 
 export type ModalProps<T extends Modal["type"]> = Modal & { type: T } & {

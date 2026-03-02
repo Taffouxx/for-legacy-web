@@ -1,6 +1,7 @@
 import { Markdown } from "@styled-icons/boxicons-logos";
 import { UserCircle, ChevronRight } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
+import { runInAction } from "mobx";
 import { useHistory, useLocation } from "react-router-dom";
 import { API } from "revolt.js";
 
@@ -26,7 +27,8 @@ import { UserProfile } from "../../../controllers/modals/components/legacy/UserP
 
 export const Profile = observer(() => {
     const translate = useTranslation();
-    const session = useSession()!;
+    const session = useSession();
+    if (!session) return null;
     const client = session.client!;
     const state = useApplicationState();
     const location = useLocation();
@@ -127,8 +129,8 @@ export const Profile = observer(() => {
                                         fileType="avatars"
                                         behaviour="upload"
                                         maxFileSize={4_000_000}
-                                        onUpload={(avatar) => client.users.edit({ avatar })}
-                                        remove={() => client.users.edit({ remove: ["Avatar"] })}
+                                        onUpload={(avatar) => runInAction(() => client.users.edit({ avatar }))}
+                                        remove={() => runInAction(() => client.users.edit({ remove: ["Avatar"] }))}
                                         defaultPreview={client.user!.generateAvatarURL(
                                             { max_side: 256 },
                                             true,

@@ -14,7 +14,6 @@ import {
 } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
 import { useHistory } from "react-router-dom";
-import { UserPermission, API } from "revolt.js";
 
 import styles from "./UserProfile.module.scss";
 import { Text } from "preact-i18n";
@@ -33,6 +32,7 @@ import { useSession } from "../../../../controllers/client/ClientController";
 import { modalController } from "../../../../controllers/modals/ModalController";
 import { ModalProps } from "../../types";
 import { useApplicationState } from "../../../../mobx/State";
+import { TrophyList } from "../../../../components/common/user/TrophyList";
 
 export const UserProfile = observer(
     ({
@@ -45,20 +45,24 @@ export const UserProfile = observer(
         ...props
     }: ModalProps<"user_profile">) => {
         const [profile, setProfile] = useState<
-            undefined | null | API.UserProfile
+            undefined | null | any
         >(undefined);
         const [mutual, setMutual] = useState<
-            undefined | null | API.MutualResponse
+            undefined | null | any
         >(undefined);
         const [showMenu, setShowMenu] = useState(false);
         const [copied, setCopied] = useState(false);
 
         const history = useHistory();
-        const session = useSession()!;
-        const client = session.client!;
+        const session = useSession();
+        const client = session?.client;
         const state = useApplicationState();
 
+        if (!session || !client) return null;
+
         const user = client.users.get(user_id);
+        console.log("ПОЛНЫЙ ЮЗЕР В ПАМЯТИ:", user);
+        // Removed unsafe debug log causing crash
 
         const [tab, setTab] = useState("dashboard");
 
@@ -112,7 +116,7 @@ export const UserProfile = observer(
             if (isPlaceholder) return;
             if (session.state === "Online" && typeof profile === "undefined") {
                 setProfile(null);
-                if (user.permission & UserPermission.ViewProfile) {
+                if (user.permission & 1 << 0) {
                     user.fetchProfile().then(setProfile).catch(noop);
                 }
             }
@@ -190,9 +194,28 @@ export const UserProfile = observer(
                 <div className={styles.body}>
                     <div className={styles.identity}>
                         <div className={styles.details}>
-                            <span className={styles.displayname}>
-                                {member?.nickname ?? (user as any).display_name ?? user.username}
-                            </span>
+                            {/* ВОТ ТУТ МАГИЯ: Флекс-контейнер для ника и эмодзи */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span className={styles.displayname}>
+                                    {member?.nickname ?? (user as any).display_name ?? user.username}
+                                </span>
+                                
+                                {/* Эмодзи-статус впритык к нику */}
+                                {user.status?.emoji && (
+                                    <span 
+                                        title={user.status.text || ''} 
+                                        style={{ 
+                                            cursor: user.status.text ? 'help' : 'default', 
+                                            fontSize: '1.2em', 
+                                            lineHeight: 1,
+                                            userSelect: 'none'
+                                        }}
+                                    >
+                                        {user.status.emoji}
+                                    </span>
+                                )}
+                            </div>
+
                             <div className={styles.nameRow}>
                                 <span className={styles.username}>
                                     {user.username}#{(user as any).discriminator}
@@ -260,11 +283,7 @@ export const UserProfile = observer(
                             </div>
                         )}
 
-                        {user.status?.text && (
-                            <div className={styles.statusText}>
-                                {user.status.text}
-                            </div>
-                        )}
+                        {/* СТАРЫЙ ТЕКСТОВЫЙ СТАТУС УДАЛЕН ОТСЮДА */}
 
                         <div className={styles.divider} />
 
@@ -286,7 +305,7 @@ export const UserProfile = observer(
                             <div className={styles.section}>
                                 <div className={styles.category}><Text id="app.special.popovers.user_profile.roles" /></div>
                                 <div className={styles.roles}>
-                                    {member.roles.map(roleId => {
+                                    {member.roles.map((roleId: any) => {
                                         const role = (server?.roles as any)?.[roleId];
                                         if (!role) return null;
                                         return (
@@ -307,7 +326,7 @@ export const UserProfile = observer(
             </div>
         );
 
-        const rightPanel = (
+ const rightPanel = (
             <div className={styles.rightColumn}>
                 <div className={styles.tabs}>
                     <div
@@ -316,14 +335,20 @@ export const UserProfile = observer(
                         <Text id="app.special.popovers.user_profile.tabs.dashboard" />
                     </div>
                     <div
-                        data-active={tab === "activity"}
-                        onClick={() => setTab("activity")}>
-                        <Text id="app.special.popovers.user_profile.tabs.activity" />
+                        className={styles.goldTab}
+                        data-active={tab === "hall_of_fame"}
+                        onClick={() => setTab("hall_of_fame")}>
+                        <Text id="app.special.popovers.user_profile.tabs.hall_of_fame" />
                     </div>
                     <div
                         data-active={tab === "wishlist"}
                         onClick={() => setTab("wishlist")}>
                         <Text id="app.special.popovers.user_profile.tabs.wishlist" />
+                    </div>
+                    <div
+                        data-active={tab === "activity"}
+                        onClick={() => setTab("activity")}>
+                        <Text id="app.special.popovers.user_profile.tabs.activity" />
                     </div>
                 </div>
                 <div className={styles.content}>
@@ -333,10 +358,15 @@ export const UserProfile = observer(
                             <div><Text id="app.special.popovers.user_profile.widgets_soon" /></div>
                         </div>
                     )}
+                    
+                    {/* ЗАЛ СЛАВЫ */}
+                    {tab === "hall_of_fame" && (
+                        <TrophyList trophies={(user as any).trophies ?? []} />
+                    )}
+
                 </div>
             </div>
         );
-
         const content = (
             <div
                 className={`${styles.modal} ${compact ? styles.compact : ""}`}
@@ -367,6 +397,7 @@ export const UserProfile = observer(
                 transparent
                 className={styles.modal}
                 maxWidth="900px">
+                {/* @ts-ignore Modal children */}
                 {content}
             </Modal>
         );

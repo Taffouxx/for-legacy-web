@@ -27,7 +27,7 @@ COPY .yarn ./.yarn
 COPY external ./external
 
 # Устанавливаем зависимости
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Теперь копируем остальной код
 COPY . .

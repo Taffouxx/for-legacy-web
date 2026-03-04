@@ -130,7 +130,7 @@ export default observer(({ server }: Props) => {
     const openInvite = (e: any) => {
         e.stopPropagation();
         const client = server.client;
-        const channelId = server.channel_ids.find(id => {
+        const channelId = server.channel_ids.find((id: string) => {
             const chan = client.channels.get(id);
             return chan && chan.channel_type === "TextChannel";
         });
@@ -195,6 +195,31 @@ export default observer(({ server }: Props) => {
                                         strokeWidth={10}
                                     />
                                 </foreignObject>
+                            </svg>
+                        </Tooltip>
+                    ) : undefined}
+                    {server.flags && server.flags & 4 ? (
+                        <Tooltip
+                            content={
+                                <Text id="app.special.server-badges.partner" />
+                            }
+                            placement={"bottom-start"}>
+                            <svg width="18" height="18" style={{ flexShrink: 0 }}>
+                                <image
+                                    xlinkHref="/assets/badges/verified.svg"
+                                    height="18"
+                                    width="18"
+                                />
+                                <image
+                                    xlinkHref="/assets/badges/partner1.svg"
+                                    height="12"
+                                    width="12"
+                                    x="3"
+                                    y="3"
+                                    style={{
+                                        filter: "brightness(0)",
+                                    }}
+                                />
                             </svg>
                         </Tooltip>
                     ) : undefined}

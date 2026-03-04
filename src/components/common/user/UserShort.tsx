@@ -7,15 +7,16 @@ import styled, { css } from "styled-components/macro";
 
 import { Ref, Fragment as PFragment } from "preact";
 import { Text } from "preact-i18n";
+import { useState } from "preact/hooks";
 
 import { internalEmit } from "../../../lib/eventEmitter";
 
 import { dayjs } from "../../../context/Locale";
 
 import { useClient } from "../../../controllers/client/ClientController";
-import { modalController } from "../../../controllers/modals/ModalController";
 import Tooltip from "../Tooltip";
 import UserIcon from "./UserIcon";
+import MiniProfile from "./MiniProfile";
 
 const BotBadge = styled.div`
     display: inline-block;
@@ -185,21 +186,26 @@ export default function UserShort({
     children?: any;
 }) {
     const F = PFragment as any;
-    const openProfile = () =>
-        user &&
-        modalController.push({ type: "user_profile", user_id: user._id });
+    const [miniProfile, setMiniProfile] = useState<{ x: number; y: number } | null>(null);
 
     const handleUserClick = (e: MouseEvent) => {
         if (e.shiftKey && user?._id) {
             e.preventDefault();
             internalEmit("MessageBox", "append", `<@${user?._id}>`, "mention");
-        } else {
-            openProfile();
+        } else if (user?._id) {
+            setMiniProfile({ x: e.clientX, y: e.clientY });
         }
     };
 
     return (
         <F>
+            {miniProfile && user && (
+                <MiniProfile
+                    userId={user._id}
+                    position={{ x: miniProfile.x, y: miniProfile.y }}
+                    onClose={() => setMiniProfile(null)}
+                />
+            )}
             <UserIcon
                 target={user}
                 size={size ?? 24}

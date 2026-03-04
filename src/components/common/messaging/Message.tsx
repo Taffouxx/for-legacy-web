@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+// @ts-ignore - revolt.js module resolution issue
 import { Message as MessageObject } from "revolt.js";
 
 import { useTriggerEvents } from "preact-context-menu";
@@ -18,6 +19,7 @@ import { modalController } from "../../../controllers/modals/ModalController";
 import Markdown from "../../markdown/Markdown";
 import UserIcon from "../user/UserIcon";
 import { Username } from "../user/UserShort";
+import MiniProfile from "../user/MiniProfile";
 import MessageBase, {
     MessageContent,
     MessageDetail,
@@ -68,11 +70,7 @@ const Message = observer(
               })
             : undefined;
 
-        const openProfile = () =>
-            modalController.push({
-                type: "user_profile",
-                user_id: message.author_id,
-            });
+        const [miniProfile, setMiniProfile] = useState<{ userId: string; x: number; y: number } | null>(null);
 
         const handleUserClick = (e: MouseEvent) => {
             if (e.shiftKey && user?._id) {
@@ -82,8 +80,8 @@ const Message = observer(
                     `<@${user._id}>`,
                     "mention",
                 );
-            } else {
-                openProfile();
+            } else if (user?._id) {
+                setMiniProfile({ userId: user._id, x: e.clientX, y: e.clientY });
             }
         };
 
@@ -94,8 +92,15 @@ const Message = observer(
 
         return (
             <div id={message._id}>
+                {miniProfile && (
+                    <MiniProfile
+                        userId={miniProfile.userId}
+                        position={{ x: miniProfile.x, y: miniProfile.y }}
+                        onClose={() => setMiniProfile(null)}
+                    />
+                )}
                 {!hideReply &&
-                    message.reply_ids?.map((message_id, index) => (
+                    message.reply_ids?.map((message_id: string, index: number) => (
                         <MessageReply
                             key={message_id}
                             index={index}
@@ -180,7 +185,7 @@ const Message = observer(
                                 <I18nError error={queued.error} />
                             </Category>
                         )}
-                        {message.attachments?.map((attachment, index) => (
+                        {message.attachments?.map((attachment: any, index: number) => (
                             <Attachment
                                 key={index}
                                 attachment={attachment}
@@ -190,7 +195,7 @@ const Message = observer(
                                 }
                             />
                         ))}
-                        {message.embeds?.map((embed, index) => (
+                        {message.embeds?.map((embed: any, index: number) => (
                             <Embed key={index} embed={embed} />
                         ))}
                         <Reactions message={message} />

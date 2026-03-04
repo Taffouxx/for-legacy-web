@@ -174,7 +174,6 @@ export default observer(() => {
                         </ConditionalLink>
                     );
                 })}
-                <PaintCounter />
             </GenericSidebarList>
         </GenericSidebarBase>
     );

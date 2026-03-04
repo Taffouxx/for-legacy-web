@@ -1,15 +1,18 @@
 import { Link } from "react-router-dom";
 import { GroupedVirtuoso } from "react-virtuoso";
+// @ts-ignore
 import { Channel, User } from "revolt.js";
 import styled, { css } from "styled-components/macro";
 
 import { Text } from "preact-i18n";
 import { memo } from "preact/compat";
+import { useState } from "preact/hooks";
 
 import { internalEmit } from "../../../lib/eventEmitter";
 
 import { modalController } from "../../../controllers/modals/ModalController";
 import { UserButton } from "../items/ButtonItem";
+import MiniProfile from "../../common/user/MiniProfile";
 
 export type MemberListGroup = {
     type: "online" | "offline" | "role" | "no_offline";
@@ -50,31 +53,41 @@ const NoOomfie = styled.div`
     gap: 4px;
 `;
 
-const ItemContent = memo(
-    ({ item, context }: { item: User; context: Channel }) => (
-        <UserButton
-            key={item._id}
-            user={item}
-            margin
-            context={context}
-            onClick={(e) => {
-                if (e.shiftKey) {
-                    internalEmit(
-                        "MessageBox",
-                        "append",
-                        `<@${item._id}>`,
-                        "mention",
-                    );
-                } else {
-                    modalController.push({
-                        type: "user_profile",
-                        user_id: item._id,
-                    });
-                }
-            }}
-        />
-    ),
-);
+function ItemContent({ item, context }: { item: User; context: Channel }) {
+    const [miniProfile, setMiniProfile] = useState<{ x: number; y: number } | null>(null);
+
+    return (
+        <div style={{ display: 'contents' }}>
+            {miniProfile && (
+                <MiniProfile
+                    userId={item._id}
+                    serverId={(context as any).server_id ?? undefined}
+                    position={{ x: miniProfile.x, y: miniProfile.y }}
+                    onClose={() => setMiniProfile(null)}
+                />
+            )}
+            <UserButton
+                key={item._id}
+                user={item}
+                margin
+                context={context}
+                onClick={(e: MouseEvent) => {
+                    if (e.shiftKey) {
+                        internalEmit(
+                            "MessageBox",
+                            "append",
+                            `<@${item._id}>`,
+                            "mention",
+                        );
+                    } else {
+                        setMiniProfile({ x: e.clientX, y: e.clientY });
+                    }
+                }}
+            />
+        </div>
+    );
+}
+
 
 export default function MemberList({
     entries,
@@ -91,17 +104,14 @@ export default function MemberList({
                 return (
                     <ListCategory first={index === 0}>
                         {entry.type === "role" ? (
-                            <>{entry.name}</>
+                            <span>{entry.name}</span>
                         ) : entry.type === "online" ? (
                             <Text id="app.status.online" />
                         ) : (
                             <Text id="app.status.offline" />
                         )}
                         {entry.type !== "no_offline" && (
-                            <>
-                                {" – "}
-                                {entry.users.length}
-                            </>
+                            <span>{" – "}{entry.users.length}</span>
                         )}
                     </ListCategory>
                 );

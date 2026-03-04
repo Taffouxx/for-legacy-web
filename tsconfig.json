@@ -12,7 +12,7 @@
         "moduleResolution": "Node",
         "baseUrl": ".",
         "paths": {
-            "revolt.js": ["./external/revolt.js/lib/index.js"],
+            "revolt.js": ["./external/revolt.js/src/index.ts"],
             "revolt.js/esm/maps/Emojis": ["./external/revolt.js/esm/maps/Emojis.js"]
         },
         "resolveJsonModule": true,
@@ -25,5 +25,5 @@
         "types": ["vite-plugin-pwa/client"],
         "experimentalDecorators": true
     },
-    "include": ["src", "external/lang/Languages.ts", "external/revolt.js/lib/**/*", "external/revolt.js/esm/**/*"]
+    "include": ["src", "external/lang/Languages.ts", "external/revolt.js/src/**/*", "external/revolt.js/lib/**/*", "external/revolt.js/esm/**/*"]
 }

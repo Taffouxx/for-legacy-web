@@ -699,7 +699,8 @@
             },
             "server-badges": {
                 "official": "Official Server",
-                "verified": "Verified Server"
+                "verified": "Verified Server",
+                "partner": "Partner Server"
             },
             "modals": {
                 "error": "An error occurred!",
@@ -881,6 +882,7 @@
                     "copied": "ID copied to clipboard!",
                     "edit_profile": "Edit profile",
                     "add_friend": "Add friend",
+                    "view_full_profile": "View Full Profile",
                     "member_since": "Member since",
                     "roles": "Roles",
                     "widgets_soon": "Your widgets will appear here soon!",

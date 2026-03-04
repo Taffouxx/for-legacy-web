@@ -220,7 +220,7 @@ export const UserProfile = observer(
                                 <span className={styles.username}>
                                     {user.username}#{(user as any).discriminator}
                                 </span>
-                                {user.badges && user.badges > 0 && (
+                                {!!user.badges && (
                                     <div className={styles.badges}>
                                         <UserBadges badges={user.badges} uid={user._id} />
                                     </div>

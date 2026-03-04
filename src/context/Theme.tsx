@@ -290,26 +290,26 @@ export const PRESETS: Record<string, Theme> = {
         "status-invisible": "#A5A5A5",
     },
     dark: {
-        accent: "#FD6671",
-        background: "#191919",
-        foreground: "#F6F6F6",
-        block: "#2D2D2D",
-        "message-box": "#363636",
-        mention: "rgba(251, 255, 0, 0.06)",
-        success: "#65E572",
+        accent: "#7c3aed",
+        background: "#1b1b1b",
+        foreground: "#F0F0F0",
+        block: "#282828",
+        "message-box": "#252525",
+        mention: "rgba(124, 58, 237, 0.08)",
+        success: "#3ABF7E",
         warning: "#FAA352",
-        tooltip: "#000000",
+        tooltip: "#111111",
         error: "#ED4245",
-        hover: "rgba(0, 0, 0, 0.1)",
-        "scrollbar-thumb": "#CA525A",
+        hover: "rgba(255, 255, 255, 0.06)",
+        "scrollbar-thumb": "#7c3aed",
         "scrollbar-track": "transparent",
-        "primary-background": "#242424",
-        "primary-header": "#363636",
-        "secondary-background": "#1E1E1E",
-        "secondary-foreground": "#C8C8C8",
-        "secondary-header": "#2D2D2D",
-        "tertiary-background": "#4D4D4D",
-        "tertiary-foreground": "#848484",
+        "primary-background": "#1b1b1b",
+        "primary-header": "#272727",
+        "secondary-background": "#1b1b1b",
+        "secondary-foreground": "#B0B0B0",
+        "secondary-header": "#1b1b1b",
+        "tertiary-background": "#353535",
+        "tertiary-foreground": "#707070",
         "status-online": "#3ABF7E",
         "status-away": "#F39F00",
         "status-focus": "#4799F0",
@@ -387,10 +387,13 @@ export default observer(() => {
 
     const variables = theme.computeVariables();
     return (
+        // @ts-ignore
         <>
+            {/* @ts-ignore */}
             <Helmet>
                 <meta name="theme-color" content={variables["background"]} />
             </Helmet>
+            {/* @ts-ignore */}
             <GlobalTheme theme={variables} />
             <style dangerouslySetInnerHTML={{ __html: theme.getCSS() ?? "" }} />
         </>

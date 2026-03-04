@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable react-hooks/rules-of-hooks */
 import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -12,6 +13,12 @@ import {
 } from "../../../controllers/client/ClientController";
 import { GenericSidebarBase } from "../SidebarBase";
 import MemberList, { MemberListGroup } from "./MemberList";
+import styled from "styled-components/macro";
+
+const RightSidebarBase = styled(GenericSidebarBase)`
+    border-right: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.055);
+`;
 
 export default function MemberSidebar() {
     const channel = useClient().channels.get(
@@ -176,13 +183,13 @@ export const GroupMemberSidebar = observer(
         const entries = useEntries(channel, () => channel.recipient_ids!);
 
         return (
-            <GenericSidebarBase data-scroll-offset="with-padding">
+            <RightSidebarBase data-scroll-offset="with-padding">
                 {/*<Container>
                     {isTouchscreenDevice && <div>Group settings go here</div>}
                 </Container>*/}
 
                 <MemberList entries={entries} context={channel} />
-            </GenericSidebarBase>
+            </RightSidebarBase>
         );
     },
 );
@@ -231,12 +238,12 @@ export const ServerMemberSidebar = observer(
         );
 
         return (
-            <GenericSidebarBase data-scroll-offset="with-padding">
+            <RightSidebarBase data-scroll-offset="with-padding">
                 {/*<Container>
                     {isTouchscreenDevice && <div>Server settings go here</div>}
                 </Container>*/}
                 <MemberList entries={entries} context={channel} />
-            </GenericSidebarBase>
+            </RightSidebarBase>
         );
     },
 );

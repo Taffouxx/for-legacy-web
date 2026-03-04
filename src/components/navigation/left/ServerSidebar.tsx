@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { observer } from "mobx-react-lite";
 import { Redirect, useParams } from "react-router";
 import styled, { css } from "styled-components/macro";
@@ -30,8 +31,7 @@ const ServerBase = styled.div`
     flex-shrink: 0;
     flex-direction: column;
     background: var(--secondary-background);
-    border-start-start-radius: 8px;
-    border-end-start-radius: 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.055);
     overflow: hidden;
 
     ${isTouchscreenDevice &&

@@ -8,13 +8,13 @@ export default styled.div`
     user-select: none;
     flex-direction: row;
     align-items: stretch;
-    /*background: var(--background);*/
 
     background-color: rgba(
         var(--background-rgb),
         max(var(--min-opacity), 0.75)
     );
     backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.055);
 `;
 
 export const GenericSidebarBase = styled.div<{
@@ -25,17 +25,8 @@ export const GenericSidebarBase = styled.div<{
     display: flex;
     flex-shrink: 0;
     flex-direction: column;
-    /*border-end-start-radius: 8px;*/
-    background: var(--secondary-background);
-
-    /*> :nth-child(1) {
-        //border-end-start-radius: 8px;
-    }
-
-    > :nth-child(2) {
-        margin-top: 48px;
-        background: red;
-    }*/
+    background: #1b1b1b;
+    border-right: 1px solid rgba(255, 255, 255, 0.055);
 
     ${(props) =>
         props.mobilePadding &&

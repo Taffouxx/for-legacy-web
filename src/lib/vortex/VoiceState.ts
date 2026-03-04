@@ -95,7 +95,7 @@ class VoiceStateReference {
             const call = await channel.joinCall();
 
             await this.client.connect(
-                channel.client.configuration!.features.voso.ws,
+                call.url, 
                 channel._id,
             );
 
@@ -110,7 +110,7 @@ class VoiceStateReference {
                 this.status = VoiceStatus.RTC_CONNECTING;
             });
 
-            await this.client.initializeTransports();
+            // LiveKit handles transport initialization automatically
         } catch (err) {
             console.error(err);
 
@@ -168,7 +168,9 @@ class VoiceStateReference {
 
         this.client.isDeaf = false;
         this.client?.consumers.forEach((consumer) => {
-            consumer.audio?.resume();
+            if (consumer.audio) {
+                consumer.audio.play();
+            }
         });
 
         this.syncState();
@@ -190,7 +192,7 @@ class VoiceStateReference {
                     audio: mediaDevice ? { deviceId: mediaDevice } : true,
                 });
 
-                await this.client?.startProduce(
+                const localTrack = await this.client?.startProduce(
                     mediaStream.getAudioTracks()[0],
                     "audio",
                 );

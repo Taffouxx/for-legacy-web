@@ -50,6 +50,7 @@
         "axios": "^1.13.6",
         "fs-extra": "^10.0.0",
         "klaw": "^3.0.0",
+        "livekit-client": "^2.17.2",
         "lottie-react": "^2.4.0",
         "revolt-api": "^0.8.9",
         "sirv-cli": "^1.0.14",

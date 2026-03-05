@@ -281,6 +281,6 @@ export default class Session {
      * @returns Boolean
      */
     @computed get ready() {
-        return this.client?.ready() ?? false;
+        return this.state === "Online";
     }
 }

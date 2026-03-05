@@ -193,11 +193,15 @@ export default class Session {
                     console.log("Session data:", JSON.stringify(data.session));
                     this.client!.useExistingSession(data.session);
                     this.client!.connect();
+                    
                     await this.client!.api.get("/");
 
-                    const { onboarding } = await this.client!.api.get(
-                        "/onboard/hello",
-                    );
+                    const res = await fetch(`${import.meta.env.VITE_API_URL}/onboard/hello`, {
+                        headers: {
+                            "X-Session-Token": data.session.token,
+                        },
+                    });
+                    const { onboarding } = await res.json();
 
                     if (onboarding) {
                         modalController.push({

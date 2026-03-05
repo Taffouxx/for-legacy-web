@@ -9,7 +9,7 @@ import styles from "./Panes.module.scss";
 import { Text } from "preact-i18n";
 import { useCallback, useEffect, useState } from "preact/hooks";
 
-import { Button, LineDivider, Tip, CategoryButton, InputBox } from "@revoltchat/ui";
+import { Button, LineDivider, Tip, CategoryButton, InputBox } from "../../../lib/ui";
 import { useApplicationState } from "../../../mobx/State";
 
 import { noop } from "../../../lib/js";

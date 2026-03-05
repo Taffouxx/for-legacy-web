@@ -225,19 +225,15 @@ export default class Session {
             // Client got disconnected
             case "DISCONNECT": {
                 if (navigator.onLine) {
-                    this.assert("Online");
-                    this.state = "Disconnected";
-
-                    setTimeout(() => {
-                        // Check we are still disconnected before retrying.
-                        if (this.state === "Disconnected") {
-                            this.emit({
-                                action: "RETRY",
-                            });
-                        }
-                    }, 1000);
+                    if (this.state === "Connecting" || this.state === "Online") {
+                        this.state = "Disconnected";
+                        setTimeout(() => {
+                            if (this.state === "Disconnected") {
+                                this.emit({ action: "RETRY" });
+                            }
+                        }, 1000);
+                    }
                 }
-
                 break;
             }
             // We should try reconnecting

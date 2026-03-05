@@ -159,10 +159,13 @@ export default class Session {
     private async continueLogin(data: Transition & { action: "LOGIN" }) {
         try {
             this.client!.useExistingSession(data.session);
-            this.client!.connect();
             
-            // Wait a bit for user data to load
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Wait for user to be available
+            let attempts = 0;
+            while (!this.client!.user && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
             
             if (this.client!.user) {
                 this.user_id = this.client!.user!._id;
@@ -196,7 +199,14 @@ export default class Session {
 
                 if (data.knowledge === "new") {
                     this.client!.useExistingSession(data.session);
-                    this.client!.connect();
+                    
+                    // Wait for user to be available
+                    let attempts = 0;
+                    while (!this.client!.user && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+                    
                     await this.client!.api.get("/");
 
                     const { onboarding } = await this.client!.api.get(

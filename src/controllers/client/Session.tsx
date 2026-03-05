@@ -103,6 +103,9 @@ export default class Session {
      */
     private onReady() {
         resetMemberSidebarFetched();
+        if (this.client?.user) {
+            this.user_id = this.client.user._id;
+        }
         this.emit({
             action: "SUCCESS",
         });
@@ -162,19 +165,7 @@ export default class Session {
     private async continueLogin(data: Transition & { action: "LOGIN" }) {
         try {
             this.client!.useExistingSession(data.session);
-            
-            // Wait for user to be available
-            let attempts = 0;
-            while (!this.client!.user && attempts < 50) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
-            
-            if (this.client!.user) {
-                this.user_id = this.client!.user!._id;
-            } else {
-                console.error("Client user is missing after useExistingSession!");
-            }
+            // user_id установится в onReady через SUCCESS
             state.auth.setSession(data.session);
         } catch (err) {
             this.state = "Ready";
@@ -202,13 +193,6 @@ export default class Session {
 
                 if (data.knowledge === "new") {
                     this.client!.useExistingSession(data.session);
-                    
-                    // Wait for user to be available
-                    let attempts = 0;
-                    while (!this.client!.user && attempts < 50) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        attempts++;
-                    }
                     
                     await this.client!.api.get("/");
 

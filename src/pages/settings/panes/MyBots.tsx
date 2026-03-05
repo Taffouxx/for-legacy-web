@@ -3,6 +3,7 @@ import { Key, Clipboard, Globe, Plus } from "@styled-icons/boxicons-regular";
 import { LockAlt, HelpCircle } from "@styled-icons/boxicons-solid";
 import type { AxiosError } from "axios";
 import { observer } from "mobx-react-lite";
+// @ts-ignore
 import { API, User } from "revolt.js";
 import styled from "styled-components/macro";
 
@@ -328,6 +329,7 @@ function BotCard({ bot, onDelete, onUpdate }: Props) {
                 </Button>
             </div>
             {!editMode && (
+                // @ts-ignore
                 <CategoryButton
                     account
                     icon={<Key size={24} />}
@@ -524,6 +526,7 @@ export const MyBots = observer(() => {
 
     return (
         <div className={styles.myBots}>
+            {/* @ts-ignore */}
             <CategoryButton
                 account
                 icon={<Plus size={24} />}

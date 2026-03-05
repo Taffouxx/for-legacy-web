@@ -1,9 +1,37 @@
 // Простые заглушки для @revoltchat/ui компонентов
 
 import styled from "styled-components";
+import { ComponentChildren } from "preact";
+
+// Интерфейсы для компонентов
+interface ButtonProps {
+    children?: ComponentChildren;
+    palette?: string;
+    disabled?: boolean;
+    onClick?: () => void;
+}
+
+interface CategoryProps {
+    children?: ComponentChildren;
+    palette?: string;
+}
+
+interface InputBoxProps {
+    value?: string;
+    onChange?: (e: any) => void;
+    placeholder?: string;
+    type?: string;
+    palette?: string;
+    disabled?: boolean;
+}
+
+interface CheckboxProps {
+    checked?: boolean;
+    onChange?: (e: any) => void;
+}
 
 // Button
-export const Button = styled.button<{ palette?: string }>`
+export const Button = styled.button<ButtonProps>`
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
@@ -58,7 +86,7 @@ export const Tip = styled.div`
 `;
 
 // InputBox
-export const InputBox = styled.input`
+export const InputBox = styled.input<InputBoxProps>`
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -71,12 +99,12 @@ export const InputBox = styled.input`
 `;
 
 // Checkbox
-export const Checkbox = styled.input.attrs({ type: "checkbox" })`
+export const Checkbox = styled.input.attrs<CheckboxProps>({ type: "checkbox" })`
     margin-right: 8px;
 `;
 
 // Category
-export const Category = styled.div`
+export const Category = styled.div<CategoryProps>`
     margin-bottom: 16px;
     
     h3 {

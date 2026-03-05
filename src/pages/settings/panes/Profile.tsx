@@ -3,6 +3,7 @@ import { UserCircle, ChevronRight } from "@styled-icons/boxicons-solid";
 import { observer } from "mobx-react-lite";
 import { runInAction } from "mobx";
 import { useHistory, useLocation } from "react-router-dom";
+// @ts-ignore
 import { API } from "revolt.js";
 
 import styles from "./Panes.module.scss";

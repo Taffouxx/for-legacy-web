@@ -1,9 +1,9 @@
 import { detect } from "detect-browser";
 import { action, computed, makeAutoObservable, ObservableMap } from "mobx";
 // @ts-ignore
-const revolt = require("revolt.js");
-const Client = revolt.Client;
-const API = revolt.API;
+import { Client } from "revolt.js";
+// @ts-ignore
+import * as API from "revolt.js";
 
 type Nullable<T> = T | null;
 type RevoltConfig = any;
@@ -48,7 +48,7 @@ class ClientController {
         });
 
         // ! FIXME: loop until success infinitely
-        (this.apiClient as any).api.get("/").then((config: RevoltConfig) => {
+        this.apiClient.api.get("/").then((config: RevoltConfig) => {
             this.configuration = config;
         });
 
@@ -213,7 +213,7 @@ class ClientController {
         }
 
         // Try to login with given credentials
-        let session = await (this.apiClient as any).api.post("/auth/session/login", {
+        let session = await this.apiClient.api.post("/auth/session/login", {
             ...credentials,
             friendly_name,
         });
@@ -237,7 +237,7 @@ class ClientController {
                 }
 
                 try {
-                    session = await (this.apiClient as any).api.post(
+                    session = await this.apiClient.api.post(
                         "/auth/session/login",
                         {
                             mfa_response,
@@ -327,5 +327,5 @@ export function useClient() {
  * @returns Revolt.js Client
  */
 export function useApi() {
-    return (clientController.getAnonymousClient() as any).api;
+    return clientController.getAnonymousClient().api;
 }

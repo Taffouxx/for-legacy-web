@@ -1,5 +1,8 @@
 import { action, computed, makeAutoObservable } from "mobx";
-import { API, Client } from "revolt.js";
+// @ts-ignore
+import { Client } from "revolt.js";
+// @ts-ignore
+import * as API from "revolt.js";
 
 import { state } from "../../mobx/State";
 
@@ -9,6 +12,7 @@ import { modalController } from "../modals/ModalController";
 /**
  * Current lifecycle state
  */
+type RevoltConfig = any;
 type State = "Ready" | "Connecting" | "Online" | "Disconnected" | "Offline";
 
 /**
@@ -19,7 +23,7 @@ type Transition =
           action: "LOGIN";
           apiUrl?: string;
           session: SessionPrivate;
-          configuration?: API.RevoltConfig;
+          configuration?: RevoltConfig;
 
           knowledge: "new" | "existing";
       }
@@ -186,7 +190,7 @@ export default class Session {
                 }
 
                 if (data.knowledge === "new") {
-                    await this.client!.fetchConfiguration();
+                    await this.client!.api.get("/");
                     this.client!.session = data.session;
                     (this.client! as any).$updateHeaders();
 

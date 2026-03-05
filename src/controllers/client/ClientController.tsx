@@ -44,7 +44,7 @@ class ClientController {
 
     constructor() {
         this.apiClient = new Client({
-            apiURL: import.meta.env.VITE_API_URL,
+            baseURL: import.meta.env.VITE_API_URL,
         });
 
         // ! FIXME: loop until success infinitely
@@ -145,10 +145,17 @@ class ClientController {
      * @param entry Session Information
      * @param knowledge Whether the session is new or existing
      */
-    @action addSession(
+    @action async addSession(
         entry: { session: SessionPrivate; apiUrl?: string },
         knowledge: "new" | "existing",
     ) {
+        // Ждём конфиг если ещё не загружен
+        if (!this.configuration) {
+            await this.apiClient.api.get("/").then((config: RevoltConfig) => {
+                this.configuration = config;
+            });
+        }
+
         const user_id = entry.session.user_id!;
 
         const session = new Session();

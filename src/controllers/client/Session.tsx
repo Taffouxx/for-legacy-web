@@ -120,7 +120,7 @@ export default class Session {
             unreads: true,
             autoReconnect: false,
             onPongTimeout: "EXIT",
-            baseURL: apiUrl ?? import.meta.env.VITE_API_URL,  // stoat.js использует baseURL, не apiURL
+            baseURL: apiUrl ?? import.meta.env.VITE_API_URL,
         });
 
         this.client.on("ready", this.onReady);

@@ -1,6 +1,12 @@
 import { detect } from "detect-browser";
 import { action, computed, makeAutoObservable, ObservableMap } from "mobx";
-import { API, Client, Nullable } from "revolt.js";
+// @ts-ignore
+const revolt = require("revolt.js");
+const Client = revolt.Client;
+const API = revolt.API;
+
+type Nullable<T> = T | null;
+type RevoltConfig = any;
 
 import { injectController } from "../../lib/window";
 
@@ -24,7 +30,7 @@ class ClientController {
     /**
      * Server configuration
      */
-    private configuration: API.RevoltConfig | null;
+    private configuration: RevoltConfig | null;
 
     /**
      * Map of user IDs to sessions
@@ -42,9 +48,9 @@ class ClientController {
         });
 
         // ! FIXME: loop until success infinitely
-        this.apiClient
-            .fetchConfiguration()
-            .then(() => (this.configuration = this.apiClient.configuration!));
+        (this.apiClient as any).api.get("/").then((config: RevoltConfig) => {
+            this.configuration = config;
+        });
 
         this.configuration = null;
         this.sessions = new ObservableMap();
@@ -179,7 +185,7 @@ class ClientController {
      * Login given a set of credentials
      * @param credentials Credentials
      */
-    async login(credentials: API.DataLogin) {
+    async login(credentials: any) {
         const browser = detect();
 
         // Generate a friendly name for this browser
@@ -207,7 +213,7 @@ class ClientController {
         }
 
         // Try to login with given credentials
-        let session = await this.apiClient.api.post("/auth/session/login", {
+        let session = await (this.apiClient as any).api.post("/auth/session/login", {
             ...credentials,
             friendly_name,
         });
@@ -216,7 +222,7 @@ class ClientController {
         if (session.result === "MFA") {
             const { allowed_methods } = session;
             while (session.result === "MFA") {
-                const mfa_response: API.MFAResponse | undefined =
+                const mfa_response: any | undefined =
                     await new Promise((callback) =>
                         modalController.push({
                             type: "mfa_flow",
@@ -231,7 +237,7 @@ class ClientController {
                 }
 
                 try {
-                    session = await this.apiClient.api.post(
+                    session = await (this.apiClient as any).api.post(
                         "/auth/session/login",
                         {
                             mfa_response,
@@ -321,5 +327,5 @@ export function useClient() {
  * @returns Revolt.js Client
  */
 export function useApi() {
-    return clientController.getAnonymousClient().api;
+    return (clientController.getAnonymousClient() as any).api;
 }

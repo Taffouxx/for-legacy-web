@@ -12,7 +12,7 @@
         "moduleResolution": "Node",
         "baseUrl": ".",
         "paths": {
-            "revolt.js": ["./external/revolt.js/src/index.ts"],
+            "revolt.js": ["./external/revolt.js/lib/index.js"],
             "revolt.js/esm/maps/Emojis": ["./external/revolt.js/esm/maps/Emojis.js"]
         },
         "resolveJsonModule": true,

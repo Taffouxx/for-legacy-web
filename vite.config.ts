@@ -118,13 +118,14 @@ export default defineConfig({
     ],
     build: {
         sourcemap: true,
+        target: "es2022",
         rollupOptions: {
             input: {
                 main: resolve(__dirname, "index.html"),
             },
         },
     },
-optimizeDeps: {
+    optimizeDeps: {
         // Заставляем Vite конвертировать эти старые пакеты в современный формат
         include: [
             "axios",
@@ -140,10 +141,10 @@ optimizeDeps: {
             "@revoltchat/ui"
         ],
         esbuildOptions: {
-            target: "esnext",
+            target: "es2022",
         },
     },
-   resolve: {
+    resolve: {
         preserveSymlinks: true,
         alias: {
             "revolt.js": resolve(__dirname, "external/revolt.js/esm/index.js"),

@@ -464,7 +464,7 @@ export default class NotificationOptions
         }
 
         const notif = await createNotification(event, {
-            icon: user.generateAvatarURL({ max_side: 256 }),
+            icon: user.avatarURL,
             badge: "/assets/icons/android-chrome-512x512.png",
             timestamp: +new Date(),
         });

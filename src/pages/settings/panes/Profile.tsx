@@ -303,7 +303,7 @@ export const Profile = observer(() => {
                                                 maxFileSize={4_000_000}
                                                 onUpload={(avatar) => member.edit({ avatar }).then(noop)}
                                                 remove={() => member.edit({ remove: ["Avatar"] }).then(noop)}
-                                                defaultPreview={client.user!.generateAvatarURL({ max_side: 256 })}
+                                                defaultPreview={client.user!.avatarURL}
                                                 previewURL={member.avatarURL}
                                             />
                                         </div>

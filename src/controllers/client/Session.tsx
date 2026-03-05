@@ -190,7 +190,7 @@ export default class Session {
                 }
 
                 if (data.knowledge === "new") {
-                    this.client!.session = data.session;
+                    await this.client!.useExistingSession(data.session);
                     await this.client!.api.get("/");
 
                     const { onboarding } = await this.client!.api.get(

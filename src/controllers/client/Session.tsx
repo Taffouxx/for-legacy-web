@@ -120,14 +120,12 @@ export default class Session {
             unreads: true,
             autoReconnect: false,
             onPongTimeout: "EXIT",
-            apiURL: apiUrl ?? import.meta.env.VITE_API_URL,
+            baseURL: apiUrl ?? import.meta.env.VITE_API_URL,  // stoat.js использует baseURL, не apiURL
         });
 
-        this.client.addListener("dropped", this.onDropped);
-        this.client.addListener("ready", this.onReady);
-        
-        // Connect to load user data
-        this.client.connect();
+        this.client.on("ready", this.onReady);
+        this.client.on("disconnected", this.onDropped);
+        // НЕ вызываем connect() здесь
     }
 
     /**
@@ -165,7 +163,7 @@ export default class Session {
     private async continueLogin(data: Transition & { action: "LOGIN" }) {
         try {
             this.client!.useExistingSession(data.session);
-            // user_id установится в onReady через SUCCESS
+            this.client!.connect();  // теперь сессия установлена, можно коннектиться
             state.auth.setSession(data.session);
         } catch (err) {
             this.state = "Ready";
@@ -193,7 +191,7 @@ export default class Session {
 
                 if (data.knowledge === "new") {
                     this.client!.useExistingSession(data.session);
-                    
+                    this.client!.connect();  // добавь это
                     await this.client!.api.get("/");
 
                     const { onboarding } = await this.client!.api.get(
@@ -245,7 +243,7 @@ export default class Session {
             // We should try reconnecting
             case "RETRY": {
                 this.assert("Disconnected");
-                this.client!.websocket.connect();
+                this.client!.connect();
                 this.state = "Connecting";
                 break;
             }

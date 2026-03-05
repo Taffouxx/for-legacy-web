@@ -122,6 +122,9 @@ export default class Session {
 
         this.client.addListener("dropped", this.onDropped);
         this.client.addListener("ready", this.onReady);
+        
+        // Connect to load user data
+        this.client.connect();
     }
 
     /**

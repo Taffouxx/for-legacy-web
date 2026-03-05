@@ -190,8 +190,8 @@ export default class Session {
                 }
 
                 if (data.knowledge === "new") {
-                    await this.client!.api.get("/");
                     this.client!.session = data.session;
+                    await this.client!.api.get("/");
 
                     const { onboarding } = await this.client!.api.get(
                         "/onboard/hello",

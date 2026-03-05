@@ -110,12 +110,7 @@ export default observer(
                                         .edit({ remove: ["Avatar"] })
                                         .then(noop)
                                 }
-                                defaultPreview={member.user?.generateAvatarURL(
-                                    {
-                                        max_side: 256,
-                                    },
-                                    false,
-                                )}
+                                defaultPreview={member.user?.avatarURL}
                                 previewURL={member.client.generateFileURL(
                                     member.avatar ?? undefined,
                                     { max_side: 256 },

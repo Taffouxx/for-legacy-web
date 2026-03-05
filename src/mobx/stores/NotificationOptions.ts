@@ -1,4 +1,5 @@
 import { action, computed, makeAutoObservable, ObservableMap } from "mobx";
+// @ts-ignore
 import { Channel, Message, Server, User } from "revolt.js";
 import { decodeTime } from "ulid";
 
@@ -317,7 +318,7 @@ export default class NotificationOptions
             if (message.masquerade?.avatar) {
                 icon = message.client.proxyFile(message.masquerade.avatar);
             } else {
-                icon = message.author?.generateAvatarURL({ max_side: 256 });
+                icon = message.author?.avatarURL;
             }
         } else if (message.system) {
             const users = message.client.users;
@@ -346,9 +347,7 @@ export default class NotificationOptions
                                     ?.username,
                             },
                         );*/
-                        icon = user?.generateAvatarURL({
-                            max_side: 256,
-                        });
+                        icon = user?.avatarURL;
                     }
                     break;
                 case "user_joined":
@@ -362,9 +361,7 @@ export default class NotificationOptions
                             `app.main.channel.system.${message.system.type}`,
                             { user: user?.username },
                         );*/
-                        icon = user?.generateAvatarURL({
-                            max_side: 256,
-                        });
+                        icon = user?.avatarURL;
                     }
                     break;
                 case "channel_renamed":
@@ -378,9 +375,7 @@ export default class NotificationOptions
                                 name: message.system.name,
                             },
                         );*/
-                        icon = user?.generateAvatarURL({
-                            max_side: 256,
-                        });
+                        icon = user?.avatarURL;
                     }
                     break;
                 case "channel_description_changed":
@@ -392,9 +387,7 @@ export default class NotificationOptions
                             { user: users.get(message.system.by)?.username },
                         );*/
                         body = `${users.get(message.system.by)?.username}`;
-                        icon = user?.generateAvatarURL({
-                            max_side: 256,
-                        });
+                        icon = user?.avatarURL;
                     }
                     break;
             }

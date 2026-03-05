@@ -233,14 +233,8 @@ function BotCard({ bot, onDelete, onUpdate }: Props) {
                                 maxFileSize={4_000_000}
                                 onUpload={(avatar) => editBotAvatar(avatar)}
                                 remove={() => editBotAvatar()}
-                                defaultPreview={user.generateAvatarURL(
-                                    { max_side: 256 },
-                                    true,
-                                )}
-                                previewURL={user.generateAvatarURL(
-                                    { max_side: 256 },
-                                    true,
-                                )}
+                                defaultPreview={user.avatarURL}
+                                previewURL={user.animatedAvatarURL}
                             />
                         )}
 

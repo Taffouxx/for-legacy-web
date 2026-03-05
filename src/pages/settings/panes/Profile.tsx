@@ -131,14 +131,8 @@ export const Profile = observer(() => {
                                         maxFileSize={4_000_000}
                                         onUpload={(avatar) => runInAction(() => client.users.edit({ avatar }))}
                                         remove={() => runInAction(() => client.users.edit({ remove: ["Avatar"] }))}
-                                        defaultPreview={client.user!.generateAvatarURL(
-                                            { max_side: 256 },
-                                            true,
-                                        )}
-                                        previewURL={client.user!.generateAvatarURL(
-                                            { max_side: 256 },
-                                            true,
-                                        )}
+                                        defaultPreview={client.user!.avatarURL}
+                                        previewURL={client.user!.animatedAvatarURL}
                                     />
                                 </div>
                                 <div className={styles.background}>

@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+// @ts-ignore
 import { Channel } from "revolt.js";
 import styled from "styled-components/macro";
 
@@ -109,7 +110,7 @@ export default observer(({ channel }: Props) => {
                             <img
                                 key={user!._id}
                                 loading="eager"
-                                src={user!.generateAvatarURL({ max_side: 256 })}
+                                src={user!.avatarURL}
                             />
                         ))}
                     </div>

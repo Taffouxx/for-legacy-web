@@ -32,6 +32,9 @@ RUN yarn install
 # Теперь копируем остальной код
 COPY . .
 
+# esm -> lib symlink для revolt.js
+RUN ln -s /app/external/revolt.js/lib /app/external/revolt.js/esm
+
 # Проверяем что переменные на месте (для дебага)
 RUN echo "Building with VITE_API_URL=$VITE_API_URL"
 
